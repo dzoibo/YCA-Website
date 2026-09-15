@@ -153,7 +153,7 @@ function Reveal({
 
 function Nav() {
   const [open, setOpen] = useState(false);
-  const [isPastHero, setIsPastHero] = useState(false);
+  const [isScrolled, setIsScrolled] = useState(false);
   const links = [
     ["Our Story", "#who"],
     ["Programs", "#programs"],
@@ -162,8 +162,11 @@ function Nav() {
   ];
   useEffect(() => {
     const updateNav = () => {
-      const hero = document.getElementById("top");
-      setIsPastHero(Boolean(hero && window.scrollY > hero.offsetHeight - 110));
+      const sentinel = document.getElementById("scroll-sentinel");
+      const scrolled = sentinel
+        ? sentinel.getBoundingClientRect().bottom <= 20
+        : window.scrollY > 60;
+      setIsScrolled(scrolled);
     };
     updateNav();
     window.addEventListener("scroll", updateNav, { passive: true });
@@ -173,22 +176,16 @@ function Nav() {
       window.removeEventListener("resize", updateNav);
     };
   }, []);
+  useEffect(() => {
+    document.body.style.overflow = open ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [open]);
   return (
-    <motion.header
-      layout
-      transition={{ type: "spring", stiffness: 310, damping: 32 }}
-      className={`inset-x-0 z-50 ${isPastHero ? "fixed top-5 px-5 sm:px-7" : "absolute top-0 px-0"}`}
-    >
-      <motion.div
-        layout
-        transition={{ type: "spring", stiffness: 310, damping: 32 }}
-        className={`mx-auto flex w-full items-center gap-6 border border-[rgba(28,73,60,.1)] bg-white/95 backdrop-blur-md transition-[border-radius,box-shadow,max-width,padding,min-height] duration-300 ${isPastHero ? "min-h-15.5 max-w-295 rounded-full px-4 shadow-[0_10px_28px_-20px_rgba(15,54,43,.7)] sm:px-5" : "min-h-19 max-w-none rounded-none border-x-0 border-t-0 px-5 shadow-[0_8px_24px_-18px_rgba(15,54,43,.32)] sm:px-7"}`}
-      >
-        <a
-          href="#top"
-          aria-label="YCA OTTAWA home"
-          className="border bg-white/60"
-        >
+    <header className={`nav-header${isScrolled ? " is-scrolled" : ""}`}>
+      <div className={`nav-bar${isScrolled ? " is-scrolled" : ""}`}>
+        <a href="#top" aria-label="YCA OTTAWA home">
           <Image
             src="/assets/yca-logo.png"
             alt="YCA OTTAWA"
@@ -209,52 +206,83 @@ function Nav() {
             </a>
           ))}
         </nav>
-        <a
-          href="#join"
-          className="button hidden bg-[#7c9b76] px-5 py-2.5 text-[13px] text-white md:inline-flex"
-        >
-          Join Us
-        </a>
-        <button
-          aria-label="Open navigation"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-          className="ml-auto grid size-10 place-items-center rounded-full border border-teal-900/15 text-teal-900 md:hidden"
-        >
-          {open ? <X size={19} /> : <Menu size={20} />}
-        </button>
-      </motion.div>
+        <div className="flex items-center  gap-3">
+          <a
+            href="#join"
+            className="button hidden bg-[#7c9b76] px-5 py-1.5  text-[13px] text-white md:inline-flex"
+          >
+            Join Us
+          </a>
+          <button
+            aria-label="Open navigation"
+            aria-expanded={open}
+            onClick={() => setOpen(!open)}
+            className="ml-auto grid size-10 place-items-center rounded-full border border-teal-900/15 text-teal-900 md:hidden"
+          >
+            {open ? <X size={19} /> : <Menu size={20} />}
+          </button>
+        </div>
+      </div>
       <AnimatePresence>
         {open && (
-          <motion.nav
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            className="mx-auto mt-2 max-w-295 overflow-hidden rounded-3xl border border-teal-900/10 bg-white/95 px-5 shadow-[0_14px_32px_-18px_rgba(15,54,43,.35)] backdrop-blur-md md:hidden"
-          >
-            <div className="grid py-3">
-              {links.map(([label, href]) => (
-                <a
-                  key={href}
-                  href={href}
+          <>
+            <motion.div
+              key="backdrop"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.25 }}
+              onClick={() => setOpen(false)}
+              className="fixed inset-0 z-[60] bg-teal-950/50 md:hidden"
+            />
+            <motion.nav
+              key="sidebar"
+              initial={{ x: "100%" }}
+              animate={{ x: 0 }}
+              exit={{ x: "100%" }}
+              transition={{ type: "spring", stiffness: 320, damping: 34 }}
+              className="fixed inset-y-0 right-0 z-[70] flex w-[82%] max-w-xs flex-col bg-white px-6 py-6 shadow-2xl md:hidden"
+            >
+              <div className="flex items-center justify-between">
+                <Image
+                  src="/assets/yca-logo.png"
+                  alt="YCA OTTAWA"
+                  width={110}
+                  height={44}
+                  className="h-10 w-auto mix-blend-multiply"
+                />
+                <button
+                  aria-label="Close navigation"
                   onClick={() => setOpen(false)}
-                  className="border-b border-teal-900/8 py-3.5 text-sm font-semibold"
+                  className="grid size-10 place-items-center rounded-full border border-teal-900/15 text-teal-900"
                 >
-                  {label}
-                </a>
-              ))}
+                  <X size={19} />
+                </button>
+              </div>
+              <div className="mt-8 grid gap-1">
+                {links.map(([label, href]) => (
+                  <a
+                    key={href}
+                    href={href}
+                    onClick={() => setOpen(false)}
+                    className="border-b border-teal-900/8 py-3.5 text-base font-semibold text-teal-900"
+                  >
+                    {label}
+                  </a>
+                ))}
+              </div>
               <a
                 href="#join"
                 onClick={() => setOpen(false)}
-                className="button mt-3 bg-[#7c9b76] text-white"
+                className="button mt-auto bg-[#7c9b76] text-white"
               >
                 Join Us
               </a>
-            </div>
-          </motion.nav>
+            </motion.nav>
+          </>
         )}
       </AnimatePresence>
-    </motion.header>
+    </header>
   );
 }
 
@@ -275,6 +303,11 @@ export function LandingPage() {
         />
         <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(28,73,60,.91),rgba(28,73,60,.82)_34%,rgba(28,73,60,.57)_52%,rgba(28,73,60,.1)_82%,transparent)]" />
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-b from-transparent via-teal-900/60 to-teal-900" />
+        <div
+          id="scroll-sentinel"
+          aria-hidden="true"
+          className="pointer-events-none invisible absolute left-0 top-0 h-20 w-px"
+        />
         <Nav />
         <div className="page-width relative py-24 sm:py-28">
           <motion.div
