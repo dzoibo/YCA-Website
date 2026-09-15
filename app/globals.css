@@ -1,0 +1,24 @@
+@import "tailwindcss";
+
+:root { --green: #1c493c; --bright-green: #194d02; --sage: #7c9b76; --cream: #f7f2e9; --yellow: #fed104; --ink: #3b4256; }
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+body { margin: 0; background: #fff; color: var(--green); font-family: Arial, Helvetica, sans-serif; }
+a { color: inherit; }
+::selection { background: var(--yellow); color: #14240b; }
+.font-display { font-family: Arial, Helvetica, sans-serif; letter-spacing: -.045em; }
+.eyebrow { font-size: .69rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: var(--bright-green); }
+.marker { background: linear-gradient(180deg, transparent 63%, rgba(254, 209, 4, .56) 63%); }
+.page-width { width: min(1180px, calc(100% - 3.5rem)); margin: 0 auto; }
+.button { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: .82rem 1.55rem; font-size: .875rem; font-weight: 750; text-decoration: none; transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease; }
+.button:hover { transform: translateY(-2px); }
+.photo-card { overflow: hidden; border-radius: 11px; border: 1px solid rgba(28,73,60,.16); background: #fff; box-shadow: 0 16px 34px -28px rgba(28,73,60,.6); }
+.photo-card img { transition: transform .6s cubic-bezier(.2,.65,.2,1); }
+.photo-card:hover img { transform: scale(1.045); }
+.partner-marquee { width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
+.partner-track { display: flex; width: max-content; align-items: center; animation: partner-scroll 38s linear infinite; }
+.partner-marquee:hover .partner-track { animation-play-state: paused; }
+.partner-logo { display: inline-flex; align-items: center; justify-content: center; min-width: 190px; padding: 0 2.2rem; color: #718179; font-size: .69rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; white-space: nowrap; }
+@keyframes partner-scroll { to { transform: translateX(-50%); } }
+@media (max-width: 640px) { .page-width { width: min(100% - 2.5rem, 1180px); } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .partner-track { animation: none; } }
