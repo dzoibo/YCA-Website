@@ -1,7 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { AnimatePresence, motion, useReducedMotion } from "motion/react";
+import {
+  AnimatePresence,
+  animate,
+  motion,
+  useInView,
+  useReducedMotion,
+} from "motion/react";
 import {
   ArrowRight,
   GraduationCap,
@@ -11,7 +17,9 @@ import {
   Users,
   X,
 } from "lucide-react";
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useRef, useState } from "react";
+
+const easeCalm = [0.22, 1, 0.36, 1] as const;
 
 const placeholder = "https://example.com";
 const team = [
@@ -151,13 +159,71 @@ function Reveal({
   );
 }
 
+function RevealImage({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
+  const reduce = useReducedMotion();
+  return (
+    <motion.div
+      className={className}
+      initial={reduce ? false : { opacity: 0, scale: 0.97 }}
+      whileInView={reduce ? {} : { opacity: 1, scale: 1 }}
+      viewport={{ once: true, amount: 0.2 }}
+      transition={{ duration: 0.6, delay, ease: easeCalm }}
+    >
+      {children}
+    </motion.div>
+  );
+}
+
+function CountUp({
+  value,
+  className = "",
+}: {
+  value: string;
+  className?: string;
+}) {
+  const match = value.match(/^(\d+)(.*)$/);
+  const target = match ? Number(match[1]) : 0;
+  const suffix = match ? match[2] : "";
+  const ref = useRef<HTMLSpanElement>(null);
+  const inView = useInView(ref, { once: true, amount: 0.6 });
+  const reduce = useReducedMotion();
+  const [display, setDisplay] = useState(reduce ? target : 0);
+  useEffect(() => {
+    if (!inView) return;
+    if (reduce) {
+      setDisplay(target);
+      return;
+    }
+    const controls = animate(0, target, {
+      duration: 1,
+      ease: easeCalm,
+      onUpdate: (v) => setDisplay(Math.round(v)),
+    });
+    return () => controls.stop();
+  }, [inView, reduce, target]);
+  return (
+    <span ref={ref} className={className}>
+      {display}
+      {suffix}
+    </span>
+  );
+}
+
 function Nav() {
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const reduceMotion = useReducedMotion();
   const layoutTransition = {
     duration: reduceMotion ? 0 : 0.45,
-    ease: [0.22, 1, 0.36, 1] as const,
+    ease: easeCalm,
   };
   const links = [
     ["Our Story", "#who"],
@@ -190,7 +256,12 @@ function Nav() {
   return (
     <motion.header
       layout={!reduceMotion}
-      transition={{ layout: layoutTransition }}
+      initial={reduceMotion ? false : { opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      transition={{
+        layout: layoutTransition,
+        default: { duration: 0.6, ease: easeCalm },
+      }}
       className={`nav-header${isScrolled ? " is-scrolled" : ""}`}
     >
       <motion.div
@@ -235,7 +306,7 @@ function Nav() {
         >
           <a
             href="#join"
-            className="button hidden bg-[#7c9b76] px-5 py-1.5  text-[13px] text-white md:inline-flex"
+            className="button hidden bg-[#7c9b76] px-5 py-2!  text-xs text-white md:inline-flex"
           >
             Join Us
           </a>
@@ -313,20 +384,43 @@ function Nav() {
 }
 
 export function LandingPage() {
+  const reduce = useReducedMotion();
+  const heroContainer = {
+    hidden: {},
+    visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
+  };
+  const heroItem = {
+    hidden: { opacity: 0, y: 16 },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: { duration: 0.5, ease: easeCalm },
+    },
+  };
   return (
     <main>
       <section
         id="top"
         className="relative flex min-h-175 items-center overflow-hidden bg-teal-900 pt-16 text-white"
       >
-        <Image
-          src="/assets/hero-steps.png"
-          alt="YCA OTTAWA members in traditional Cameroonian dress"
-          fill
-          priority
-          className="object-cover object-[72%_42%]"
-          sizes="100vw"
-        />
+        <motion.div
+          className="absolute inset-0"
+          animate={reduce ? undefined : { scale: [1, 1.035, 1] }}
+          transition={
+            reduce
+              ? undefined
+              : { duration: 22, repeat: Infinity, ease: "easeInOut" }
+          }
+        >
+          <Image
+            src="/assets/hero-steps.png"
+            alt="YCA OTTAWA members in traditional Cameroonian dress"
+            fill
+            priority
+            className="object-cover object-[72%_42%]"
+            sizes="100vw"
+          />
+        </motion.div>
         <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(28,73,60,.91),rgba(28,73,60,.82)_34%,rgba(28,73,60,.57)_52%,rgba(28,73,60,.1)_82%,transparent)]" />
         <div className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-b from-transparent via-teal-900/60 to-teal-900" />
         <div
@@ -337,25 +431,46 @@ export function LandingPage() {
         <Nav />
         <div className="page-width relative py-24 sm:py-28">
           <motion.div
-            initial={{ opacity: 0, y: 18 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.7 }}
+            initial={reduce ? false : "hidden"}
+            animate="visible"
+            variants={reduce ? undefined : heroContainer}
             className="max-w-162.5"
           >
-            <span className="inline-block border border-red-500/60 px-3 py-2 text-[10px] font-extrabold tracking-[.22em] text-yellow-400">
+            <motion.span
+              variants={reduce ? undefined : heroItem}
+              className="inline-block border border-red-500/60 px-3 py-2 text-[10px] font-extrabold tracking-[.22em] text-yellow-400"
+            >
               YCA OTTAWA
-            </span>
-            <h1 className="font-display mt-6 text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]">
-              <span className="block text-yellow-400">Community.</span>
-              <span>Culture. Growth.</span>
-            </h1>
-            <p className="mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93">
+            </motion.span>
+            <motion.div
+              variants={reduce ? undefined : heroItem}
+              className="relative mt-6"
+            >
+              <h1 className="font-display text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]">
+                <span className="block text-yellow-400">Community.</span>
+                <span>Culture. Growth.</span>
+              </h1>
+              <h1
+                aria-hidden="true"
+                className="hero-shine pointer-events-none absolute inset-0 select-none font-display text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]"
+              >
+                <span className="block">Community.</span>
+                <span>Culture. Growth.</span>
+              </h1>
+            </motion.div>
+            <motion.p
+              variants={reduce ? undefined : heroItem}
+              className="mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93"
+            >
               Young Cameroonian Association Ottawa-Gatineau connects, empowers,
               and supports young Cameroonians in the region. Since launching in
               August 2025, we&apos;ve hosted 10+ events, reached over 100 young
               Cameroonians, and partnered with 10+ local organizations.
-            </p>
-            <div className="mt-9 flex flex-wrap gap-3">
+            </motion.p>
+            <motion.div
+              variants={reduce ? undefined : heroItem}
+              className="mt-9 flex flex-wrap gap-3"
+            >
               <a className="button bg-yellow-400 text-[#14240b]" href="#join">
                 Join Us
               </a>
@@ -368,21 +483,21 @@ export function LandingPage() {
               >
                 Our Events
               </a>
-            </div>
-            <div className="mt-8 flex flex-wrap gap-1.5">
+            </motion.div>
+            <motion.div
+              variants={reduce ? undefined : heroItem}
+              className="mt-8 flex flex-wrap gap-1.5"
+            >
               {["Community", "Culture", "Growth"].map((tag, i) => (
-                <>
-                  <span
-                    key={tag}
-                    className={` px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/85"}`}
-                  >
+                <Fragment key={tag}>
+                  <span className=" px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/85">
                     {tag}
                   </span>
 
                   {i < 2 && <span>-</span>}
-                </>
+                </Fragment>
               ))}
-            </div>
+            </motion.div>
           </motion.div>
         </div>
       </section>
@@ -418,11 +533,10 @@ function Impact() {
           {stats.map(([number, label], i) => (
             <Reveal key={label} delay={i * 0.06}>
               <div className="rounded-[10px] border border-teal-900/20 bg-teal-900 p-6">
-                <div
-                  className={`font-display text-5xl font-extrabold ${i % 2 ? "text-[#f7f2e9]" : "text-yellow-400"}`}
-                >
-                  {number}
-                </div>
+                <CountUp
+                  value={number}
+                  className={`font-display block text-5xl font-extrabold ${i % 2 ? "text-[#f7f2e9]" : "text-yellow-400"}`}
+                />
                 <div className="mt-3 text-[13px] font-semibold text-[#f7f2e9]/75">
                   {label}
                 </div>
@@ -434,9 +548,13 @@ function Impact() {
           Counts are chapter-tracked across our monthly meetups, culture nights
           and partner workshops in Ottawa and Gatineau.
         </p>
-        <a href="#programs" className="button mt-7 bg-[#194d02] ">
+        <a href="#programs" className="button group mt-7 bg-[#194d02] ">
           <span className=" text-white flex gap-2 font-medium">
-            See what we run <ArrowRight className="ml-2" size={16} />
+            See what we run{" "}
+            <ArrowRight
+              className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
+              size={16}
+            />
           </span>
         </a>
       </Reveal>
@@ -446,87 +564,93 @@ function Impact() {
 function About() {
   return (
     <section id="who" className="bg-white py-20">
-      <Reveal className="page-width">
-        <p className="eyebrow">Our identity</p>
-        <h2 className="font-display mt-4 text-[clamp(2rem,3.4vw,2.8rem)] font-bold">
-          Who <span className="marker">We Are</span>
-        </h2>
-        <figure className="relative mt-11 overflow-hidden rounded-2xl border border-teal-900/20 shadow-[0_30px_64px_-42px_rgba(28,73,60,.75)]">
-          <Image
-            src="/assets/team-photo-wide.png"
-            alt="YCA OTTAWA members together"
-            width={1200}
-            height={560}
-            className="h-[clamp(260px,34vw,420px)] w-full object-cover object-[center_34%]"
-          />
-          <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-teal-900/90 to-transparent px-7 pb-5 pt-12 text-base italic text-[#f7f2e9]">
-            Our community, together.
-          </figcaption>
-        </figure>
-        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
-          <div>
-            <span className="font-display text-6xl leading-none text-yellow-400">
-              &ldquo;
-            </span>
-            <p className="-mt-4 max-w-[38ch] text-[clamp(1.1rem,1.5vw,1.35rem)] italic leading-relaxed text-teal-900">
-              YCA OTTAWA is a bridge between our Cameroonian roots and our life
-              here; a gathering place where community, culture, and growth come
-              together.
-            </p>
-            <div className="mt-7 flex items-center gap-4 rounded-2xl bg-[#f3f1e7] p-6">
-              <div className="shrink-0">
-                <Image
-                  src="/assets/yca-logo.png"
-                  alt="YCA logo"
-                  width={72}
-                  height={72}
-                  className="h-14 w-auto mix-blend-multiply"
-                />
-              </div>
-              <div>
-                <div className="mb-2 flex gap-1">
-                  <span className="size-2.5 rounded-sm bg-teal-900" />
-                  <span className="size-2.5 rounded-sm bg-red-600" />
-                  <span className="size-2.5 rounded-sm bg-yellow-400" />
+      <div className="page-width">
+        <Reveal>
+          <p className="eyebrow">Our identity</p>
+          <h2 className="font-display mt-4 text-[clamp(2rem,3.4vw,2.8rem)] font-bold">
+            Who <span className="marker">We Are</span>
+          </h2>
+        </Reveal>
+        <RevealImage delay={0.1} className="mt-11">
+          <figure className="relative overflow-hidden rounded-2xl border border-teal-900/20 shadow-[0_30px_64px_-42px_rgba(28,73,60,.75)]">
+            <Image
+              src="/assets/team-photo-wide.png"
+              alt="YCA OTTAWA members together"
+              width={1200}
+              height={560}
+              className="h-[clamp(260px,34vw,420px)] w-full object-cover object-[center_34%]"
+            />
+            <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-teal-900/90 to-transparent px-7 pb-5 pt-12 text-base italic text-[#f7f2e9]">
+              Our community, together.
+            </figcaption>
+          </figure>
+        </RevealImage>
+        <Reveal delay={0.16}>
+          <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
+            <div>
+              <span className="font-display text-6xl leading-none text-yellow-400">
+                &ldquo;
+              </span>
+              <p className="-mt-4 max-w-[38ch] text-[clamp(1.1rem,1.5vw,1.35rem)] italic leading-relaxed text-teal-900">
+                YCA OTTAWA is a bridge between our Cameroonian roots and our
+                life here; a gathering place where community, culture, and
+                growth come together.
+              </p>
+              <div className="mt-7 flex items-center gap-4 rounded-2xl bg-[#f3f1e7] p-6">
+                <div className="shrink-0">
+                  <Image
+                    src="/assets/yca-logo.png"
+                    alt="YCA logo"
+                    width={72}
+                    height={72}
+                    className="h-14 w-auto mix-blend-multiply"
+                  />
                 </div>
-                <p className="text-sm leading-relaxed text-[#4a5164]">
-                  Our logo&apos;s running figure represents{" "}
-                  <strong className="text-teal-900">youth in motion;</strong>{" "}
-                  always learning, connecting, and moving forward together,
-                  carrying the colors of home wherever we go.
-                </p>
+                <div>
+                  <div className="mb-2 flex gap-1">
+                    <span className="size-2.5 rounded-sm bg-teal-900" />
+                    <span className="size-2.5 rounded-sm bg-red-600" />
+                    <span className="size-2.5 rounded-sm bg-yellow-400" />
+                  </div>
+                  <p className="text-sm leading-relaxed text-[#4a5164]">
+                    Our logo&apos;s running figure represents{" "}
+                    <strong className="text-teal-900">youth in motion;</strong>{" "}
+                    always learning, connecting, and moving forward together,
+                    carrying the colors of home wherever we go.
+                  </p>
+                </div>
+              </div>
+              <p className="mt-7 text-[15px] leading-relaxed text-[#4a5164]">
+                Through community, culture, and growth, YCA OTTAWA strengthens
+                the bonds that unite young Cameroonians across the region.
+              </p>
+            </div>
+            <div className="rounded-2xl bg-[#12362b] -rotate-2 p-7 sm:p-8">
+              <h3 className="font-display text-2xl font-bold text-white">
+                Core Values
+              </h3>
+              <div className="mt-6 grid gap-5">
+                {values.map(([Icon, title, copy], i) => (
+                  <div
+                    key={title}
+                    className={`flex gap-4 pb-5 ${i < values.length - 1 ? "border-b border-white/10" : ""}`}
+                  >
+                    <div className="grid size-11 shrink-0 place-items-center rounded-lg border border-yellow-400/50 text-yellow-400">
+                      <Icon size={20} />
+                    </div>
+                    <div>
+                      <p className="font-semibold text-white">{title}</p>
+                      <p className="mt-1 text-sm leading-relaxed text-yellow-400/80">
+                        {copy}
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
             </div>
-            <p className="mt-7 text-[15px] leading-relaxed text-[#4a5164]">
-              Through community, culture, and growth, YCA OTTAWA strengthens the
-              bonds that unite young Cameroonians across the region.
-            </p>
           </div>
-          <div className="rounded-2xl bg-[#12362b] -rotate-2 p-7 sm:p-8">
-            <h3 className="font-display text-2xl font-bold text-white">
-              Core Values
-            </h3>
-            <div className="mt-6 grid gap-5">
-              {values.map(([Icon, title, copy], i) => (
-                <div
-                  key={title}
-                  className={`flex gap-4 pb-5 ${i < values.length - 1 ? "border-b border-white/10" : ""}`}
-                >
-                  <div className="grid size-11 shrink-0 place-items-center rounded-lg border border-yellow-400/50 text-yellow-400">
-                    <Icon size={20} />
-                  </div>
-                  <div>
-                    <p className="font-semibold text-white">{title}</p>
-                    <p className="mt-1 text-sm leading-relaxed text-yellow-400/80">
-                      {copy}
-                    </p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </Reveal>
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -613,40 +737,49 @@ function Programs() {
 function Gallery() {
   return (
     <section id="year" className="bg-white py-20">
-      <Reveal className="page-width">
-        <p className="eyebrow">A year in pictures</p>
-        <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
-          A year of color,{" "}
-          <span className="marker">culture and connection</span>.
-        </h2>
+      <div className="page-width">
+        <Reveal>
+          <p className="eyebrow">A year in pictures</p>
+          <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
+            A year of color,{" "}
+            <span className="marker">culture and connection</span>.
+          </h2>
+        </Reveal>
         <div className="mt-10 grid auto-rows-36.25 grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-42.5">
           {gallery.map(([image, alt], i) => (
-            <figure
+            <RevealImage
               key={alt}
+              delay={i * 0.05}
               className={`group relative overflow-hidden rounded-lg ${i === 0 ? "col-span-2 row-span-2" : i === 3 ? "row-span-2" : ""}`}
             >
-              <Image
-                src={`/assets/${image}`}
-                alt={alt}
-                fill
-                className="object-cover transition duration-500 group-hover:scale-105"
-              />
-              <figcaption className="absolute inset-x-0 bottom-0 translate-y-full bg-teal-900/80 p-3 text-xs font-medium text-white transition duration-300 group-hover:translate-y-0">
-                {alt}
-              </figcaption>
-            </figure>
+              <figure className="size-full">
+                <Image
+                  src={`/assets/${image}`}
+                  alt={alt}
+                  fill
+                  className="object-cover transition duration-500 group-hover:scale-105"
+                />
+                <figcaption className="absolute inset-x-0 bottom-0 translate-y-full bg-teal-900/80 p-3 text-xs font-medium text-white transition duration-300 group-hover:translate-y-0">
+                  {alt}
+                </figcaption>
+              </figure>
+            </RevealImage>
           ))}
         </div>
         <div className="text-center">
           <a
             href={placeholder}
             target="_blank"
-            className="button mt-8 border border-yellow-400 text-teal-900"
+            className="button group mt-8 border border-yellow-400 text-teal-900"
           >
-            View More Photos <ArrowRight className="ml-2" size={16} />
+            View More Photos{" "}
+            <ArrowRight
+              className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
+              size={16}
+            />
           </a>
         </div>
-      </Reveal>
+      </div>
     </section>
   );
 }
@@ -705,42 +838,46 @@ function Join() {
   ] as const;
   return (
     <section id="join" className="bg-white py-20">
-      <Reveal className="page-width">
-        <p className="eyebrow">Get involved</p>
-        <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
-          Join YCA <span className="marker">OTTAWA</span>.
-        </h2>
-        <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
-          Two ways in: drop into the WhatsApp community to see what&apos;s next,
-          or fill the short form and we&apos;ll reach out before the next
-          gathering.
-        </p>
+      <div className="page-width">
+        <Reveal>
+          <p className="eyebrow">Get involved</p>
+          <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
+            Join YCA <span className="marker">OTTAWA</span>.
+          </h2>
+          <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
+            Two ways in: drop into the WhatsApp community to see what&apos;s
+            next, or fill the short form and we&apos;ll reach out before the
+            next gathering.
+          </p>
+        </Reveal>
         <div className="mt-9 grid gap-5 sm:grid-cols-3">
-          {involve.map(({ title, copy, cta, href, variant }) => (
-            <div key={title} className="rounded-2xl bg-[#f3f1e7] p-7">
-              <h3 className="font-display text-xl font-bold text-teal-900">
-                {title}
-              </h3>
-              <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
-                {copy}
-              </p>
-              <a
-                className={`button mt-6 ${
-                  variant === "green"
-                    ? "bg-[#194d02] text-white!"
-                    : variant === "gold"
-                      ? "bg-[#e3c067] text-teal-900"
-                      : "border border-teal-900 text-teal-900"
-                }`}
-                href={href}
-                target={href === placeholder ? "_blank" : undefined}
-              >
-                {cta}
-              </a>
-            </div>
+          {involve.map(({ title, copy, cta, href, variant }, i) => (
+            <Reveal key={title} delay={i * 0.07}>
+              <div className="rounded-2xl bg-[#f3f1e7] p-7 transition-transform duration-300 ease-out hover:-translate-y-1">
+                <h3 className="font-display text-xl font-bold text-teal-900">
+                  {title}
+                </h3>
+                <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
+                  {copy}
+                </p>
+                <a
+                  className={`button mt-6 ${
+                    variant === "green"
+                      ? "bg-[#194d02] text-white!"
+                      : variant === "gold"
+                        ? "bg-[#e3c067] text-teal-900"
+                        : "border border-teal-900 text-teal-900"
+                  }`}
+                  href={href}
+                  target={href === placeholder ? "_blank" : undefined}
+                >
+                  {cta}
+                </a>
+              </div>
+            </Reveal>
           ))}
         </div>
-      </Reveal>
+      </div>
     </section>
   );
 }
@@ -771,45 +908,45 @@ function Events() {
       : "bg-yellow-400 text-[#14240b]";
   return (
     <section id="events" className="bg-white py-20">
-      <Reveal className="page-width">
-        <div className="grid gap-10 lg:grid-cols-2">
-          <div>
-            <p className="eyebrow">Up next</p>
-            <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold">
-              <span className="marker">Two gatherings</span> a month, all year
-              long.
-            </h2>
-            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#5a6560]">
-              Everything is announced in the WhatsApp community first. Newcomers
-              are always welcome to their first event without signing up for
-              anything.
+      <div className="page-width grid gap-10 lg:grid-cols-2">
+        <Reveal>
+          <p className="eyebrow">Up next</p>
+          <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold">
+            <span className="marker">Two gatherings</span> a month, all year
+            long.
+          </h2>
+          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#5a6560]">
+            Everything is announced in the WhatsApp community first. Newcomers
+            are always welcome to their first event without signing up for
+            anything.
+          </p>
+          <div className="mt-7 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5">
+            <h3 className="font-display text-lg font-bold text-teal-900">
+              New events added monthly
+            </h3>
+            <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
+              Socials, barbecues, hikes and networking nights — rotating between
+              Ottawa and Gatineau.
             </p>
-            <div className="mt-7 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5">
-              <h3 className="font-display text-lg font-bold text-teal-900">
-                New events added monthly
-              </h3>
-              <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
-                Socials, barbecues, hikes and networking nights — rotating
-                between Ottawa and Gatineau.
-              </p>
-            </div>
-            <div className="mt-7 flex flex-wrap gap-2">
-              {["Social Saturday", "Barbecue", "Hike", "Networking"].map(
-                (tag, i) => (
-                  <span
-                    key={tag}
-                    className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${i % 2 ? "bg-yellow-400 text-[#14240b]" : "bg-[#194d02] text-white"}`}
-                  >
-                    {tag}
-                  </span>
-                ),
-              )}
-            </div>
           </div>
-          <div>
-            <div className="divide-y divide-teal-900/10 border-t border-teal-900/10">
-              {events.map(({ date, title, meta, tag }) => (
-                <div key={title} className="flex gap-6 py-5">
+          <div className="mt-7 flex flex-wrap gap-2">
+            {["Social Saturday", "Barbecue", "Hike", "Networking"].map(
+              (tag, i) => (
+                <span
+                  key={tag}
+                  className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${i % 2 ? "bg-yellow-400 text-[#14240b]" : "bg-[#194d02] text-white"}`}
+                >
+                  {tag}
+                </span>
+              ),
+            )}
+          </div>
+        </Reveal>
+        <Reveal delay={0.1}>
+          <div className="divide-y divide-teal-900/10 border-t border-teal-900/10">
+            {events.map(({ date, title, meta, tag }, i) => (
+              <Reveal key={title} delay={0.1 + i * 0.06}>
+                <div className="flex gap-6 py-5">
                   <p className="w-16 shrink-0 text-xs font-bold uppercase tracking-widest text-[#194d02]">
                     {date}
                   </p>
@@ -825,18 +962,22 @@ function Events() {
                     </span>
                   </div>
                 </div>
-              ))}
-            </div>
-            <a
-              className="button mt-7 border border-teal-900 text-teal-900"
-              href={placeholder}
-              target="_blank"
-            >
-              See all events <ArrowRight className="ml-2" size={16} />
-            </a>
+              </Reveal>
+            ))}
           </div>
-        </div>
-      </Reveal>
+          <a
+            className="button group mt-7 border border-teal-900 text-teal-900"
+            href={placeholder}
+            target="_blank"
+          >
+            See all events{" "}
+            <ArrowRight
+              className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
+              size={16}
+            />
+          </a>
+        </Reveal>
+      </div>
     </section>
   );
 }
