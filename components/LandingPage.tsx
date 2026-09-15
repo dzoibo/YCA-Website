@@ -2,39 +2,166 @@
 
 import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
-import { ArrowRight, CalendarDays, Mail, Menu, X } from "lucide-react";
+import {
+  ArrowRight,
+  CalendarDays,
+  GraduationCap,
+  Handshake,
+  Mail,
+  Menu,
+  Sparkles,
+  Users,
+  X,
+} from "lucide-react";
 import { useEffect, useState } from "react";
 
 const placeholder = "https://example.com";
 const team = [
-  ["team-hilary.png", "Hilary Dondji", "President", "Leading the chapter with care, vision, and community at heart."],
-  ["team-ines-portrait.png", "Ines Ngale", "Vice President", "Building meaningful connections across Ottawa-Gatineau."],
-  ["team-anne.png", "Anne Tembou", "Secretary", "Keeping the chapter organized and moving together."],
-  ["team-franck.png", "Franck Pokam", "Communications", "Telling our story and keeping the community informed."],
-  ["team-mylena-2.png", "Myléna Mfegue", "Treasurer", "Supporting a strong, sustainable chapter."],
+  [
+    "team-hilary.png",
+    "Hilary Dondji",
+    "President",
+    "Leading the chapter with care, vision, and community at heart.",
+  ],
+  [
+    "team-ines-portrait.png",
+    "Ines Ngale",
+    "Vice President",
+    "Building meaningful connections across Ottawa-Gatineau.",
+  ],
+  [
+    "team-anne.png",
+    "Anne Tembou",
+    "Secretary",
+    "Keeping the chapter organized and moving together.",
+  ],
+  [
+    "team-franck.png",
+    "Franck Pokam",
+    "Communications",
+    "Telling our story and keeping the community informed.",
+  ],
+  [
+    "team-mylena-2.png",
+    "Myléna Mfegue",
+    "Treasurer",
+    "Supporting a strong, sustainable chapter.",
+  ],
 ] as const;
 const programs = [
-  ["audience-wide.png", "Pillar", "Community gatherings", "Ottawa & Gatineau", "Easy ways to meet people, share a meal, and feel at home."],
-  ["two-women-talking.png", "Pillar", "Cultural exchange", "Quarterly", "Celebrating Cameroonian culture with the wider community."],
-  ["two-men-smiling.png", "Pillar", "Professional growth", "With local partners", "Conversations, workshops, and connections that move us forward."],
-  ["conversation.png", "Event", "Social Saturdays", "Monthly · Ottawa", "A relaxed gathering for new faces and familiar ones."],
-  ["two-women-portrait.png", "Event", "Culture nights", "Summer · Gatineau", "Music, food, stories, and a little piece of home."],
-  ["audience-profile.png", "Event", "Outdoor days", "Seasonal · Gatineau Park", "Fresh air, good company, and a shared sense of adventure."],
+  [
+    "audience-wide.png",
+    "Pillar",
+    "Community gatherings",
+    "Ottawa & Gatineau",
+    "Easy ways to meet people, share a meal, and feel at home.",
+  ],
+  [
+    "two-women-talking.png",
+    "Pillar",
+    "Cultural exchange",
+    "Quarterly",
+    "Celebrating Cameroonian culture with the wider community.",
+  ],
+  [
+    "two-men-smiling.png",
+    "Pillar",
+    "Professional growth",
+    "With local partners",
+    "Conversations, workshops, and connections that move us forward.",
+  ],
+  [
+    "conversation.png",
+    "Event",
+    "Social Saturdays",
+    "Monthly · Ottawa",
+    "A relaxed gathering for new faces and familiar ones.",
+  ],
+  [
+    "two-women-portrait.png",
+    "Event",
+    "Culture nights",
+    "Summer · Gatineau",
+    "Music, food, stories, and a little piece of home.",
+  ],
+  [
+    "audience-profile.png",
+    "Event",
+    "Outdoor days",
+    "Seasonal · Gatineau Park",
+    "Fresh air, good company, and a shared sense of adventure.",
+  ],
 ] as const;
 const gallery = [
-  ["audience-wide.png", "Community Launch — Aug 2025"], ["two-women-portrait.png", "Culture Night — Nov 2025"], ["team-group.png", "Cultural Festival — Sept 2025"], ["speaker-mic.png", "Youth Panel — Oct 2025"], ["team-group-2.png", "Chapter Team — Winter 2026"], ["two-men-smiling.png", "Networking Mixer — Feb 2026"], ["conversation.png", "Social Saturday — Jan 2026"],
+  ["audience-wide.png", "Community Launch — Aug 2025"],
+  ["two-women-portrait.png", "Culture Night — Nov 2025"],
+  ["team-group.png", "Cultural Festival — Sept 2025"],
+  ["speaker-mic.png", "Youth Panel — Oct 2025"],
+  ["team-group-2.png", "Chapter Team — Winter 2026"],
+  ["two-men-smiling.png", "Networking Mixer — Feb 2026"],
+  ["conversation.png", "Social Saturday — Jan 2026"],
 ] as const;
-const partners = ["Bytown Career Co.", "Kola Mentorship", "Gatineau Commons", "NOËL KITCHEN", "Sparks St. Studio", "Rideau Collective", "MAPI", "North Star Youth"];
+const partners = [
+  "Bytown Career Co.",
+  "Kola Mentorship",
+  "Gatineau Commons",
+  "NOËL KITCHEN",
+  "Sparks St. Studio",
+  "Rideau Collective",
+  "MAPI",
+  "North Star Youth",
+];
+const values = [
+  [
+    Users,
+    "Community Engagement",
+    "Building real connections and networking opportunities",
+  ],
+  [
+    Sparkles,
+    "Cultural Celebration",
+    "Honoring and sharing our heritage through vibrant events",
+  ],
+  [GraduationCap, "Youth Growth", "Developing the next generation of leaders"],
+  [
+    Handshake,
+    "Local Partnership",
+    "Strengthening ties with organizations across Ottawa-Gatineau",
+  ],
+] as const;
 
-function Reveal({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+function Reveal({
+  children,
+  className = "",
+  delay = 0,
+}: {
+  children: React.ReactNode;
+  className?: string;
+  delay?: number;
+}) {
   const reduce = useReducedMotion();
-  return <motion.div className={className} initial={reduce ? false : { opacity: 0, y: 24 }} whileInView={reduce ? {} : { opacity: 1, y: 0 }} viewport={{ once: true, amount: .17 }} transition={{ duration: .62, delay, ease: [.2, .7, .2, 1] }}>{children}</motion.div>;
+  return (
+    <motion.div
+      className={className}
+      initial={reduce ? false : { opacity: 0, y: 24 }}
+      whileInView={reduce ? {} : { opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.17 }}
+      transition={{ duration: 0.62, delay, ease: [0.2, 0.7, 0.2, 1] }}
+    >
+      {children}
+    </motion.div>
+  );
 }
 
 function Nav() {
   const [open, setOpen] = useState(false);
   const [isPastHero, setIsPastHero] = useState(false);
-  const links = [["Our Story", "#who"], ["Programs", "#programs"], ["Gallery", "#year"], ["Events", "#events"]];
+  const links = [
+    ["Our Story", "#who"],
+    ["Programs", "#programs"],
+    ["Gallery", "#year"],
+    ["Events", "#events"],
+  ];
   useEffect(() => {
     const updateNav = () => {
       const hero = document.getElementById("top");
@@ -43,45 +170,629 @@ function Nav() {
     updateNav();
     window.addEventListener("scroll", updateNav, { passive: true });
     window.addEventListener("resize", updateNav);
-    return () => { window.removeEventListener("scroll", updateNav); window.removeEventListener("resize", updateNav); };
+    return () => {
+      window.removeEventListener("scroll", updateNav);
+      window.removeEventListener("resize", updateNav);
+    };
   }, []);
-  return <motion.header layout transition={{ type: "spring", stiffness: 310, damping: 32 }} className={`inset-x-0 z-50 ${isPastHero ? "fixed top-0 px-0" : "absolute top-5 px-5 sm:px-7"}`}>
-    <motion.div layout transition={{ type: "spring", stiffness: 310, damping: 32 }} className={`mx-auto flex w-full items-center gap-6 border border-[rgba(28,73,60,.1)] bg-white/95 backdrop-blur-md transition-[border-radius,box-shadow,max-width,padding,min-height] duration-300 ${isPastHero ? "min-h-[76px] max-w-none rounded-none border-x-0 border-t-0 px-5 shadow-[0_8px_24px_-18px_rgba(15,54,43,.32)] sm:px-7" : "min-h-[62px] max-w-[1180px] rounded-full px-4 shadow-[0_10px_28px_-20px_rgba(15,54,43,.7)] sm:px-5"}`}>
-      <a href="#top" aria-label="YCA Ottawa-Gatineau home"><Image src="/assets/yca-logo.png" alt="YCA Ottawa-Gatineau" width={125} height={48} className="h-11 w-auto mix-blend-multiply" priority /></a>
-      <nav className="ml-auto hidden items-center gap-7 text-sm font-semibold text-[#3B4256] md:flex">{links.map(([label, href]) => <a key={href} href={href} className="transition-colors hover:text-[#1c493c]">{label}</a>)}</nav>
-      <a href="#join" className="button hidden bg-[#7c9b76] px-5 py-2.5 text-[13px] text-white md:inline-flex">Join Us</a>
-      <button aria-label="Open navigation" aria-expanded={open} onClick={() => setOpen(!open)} className="ml-auto grid size-10 place-items-center rounded-full border border-[#1c493c]/15 text-[#1c493c] md:hidden">{open ? <X size={19}/> : <Menu size={20}/>}</button>
-    </motion.div>
-    <AnimatePresence>{open && <motion.nav initial={{ opacity: 0, y: -8 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -8 }} className="mx-auto mt-2 max-w-[1180px] overflow-hidden rounded-3xl border border-[#1c493c]/10 bg-white/95 px-5 shadow-[0_14px_32px_-18px_rgba(15,54,43,.35)] backdrop-blur-md md:hidden"><div className="grid py-3">{links.map(([label, href]) => <a key={href} href={href} onClick={() => setOpen(false)} className="border-b border-[#1c493c]/8 py-3.5 text-sm font-semibold">{label}</a>)}<a href="#join" onClick={() => setOpen(false)} className="button mt-3 bg-[#7c9b76] text-white">Join Us</a></div></motion.nav>}</AnimatePresence>
-  </motion.header>;
+  return (
+    <motion.header
+      layout
+      transition={{ type: "spring", stiffness: 310, damping: 32 }}
+      className={`inset-x-0 z-50 ${isPastHero ? "fixed top-5 px-5 sm:px-7" : "absolute top-0 px-0"}`}
+    >
+      <motion.div
+        layout
+        transition={{ type: "spring", stiffness: 310, damping: 32 }}
+        className={`mx-auto flex w-full items-center gap-6 border border-[rgba(28,73,60,.1)] bg-white/95 backdrop-blur-md transition-[border-radius,box-shadow,max-width,padding,min-height] duration-300 ${isPastHero ? "min-h-15.5 max-w-295 rounded-full px-4 shadow-[0_10px_28px_-20px_rgba(15,54,43,.7)] sm:px-5" : "min-h-19 max-w-none rounded-none border-x-0 border-t-0 px-5 shadow-[0_8px_24px_-18px_rgba(15,54,43,.32)] sm:px-7"}`}
+      >
+        <a
+          href="#top"
+          aria-label="YCA OTTAWA home"
+          className="border bg-white/60"
+        >
+          <Image
+            src="/assets/yca-logo.png"
+            alt="YCA OTTAWA"
+            width={125}
+            height={48}
+            className="h-11 w-auto mix-blend-multiply"
+            priority
+          />
+        </a>
+        <nav className="ml-auto hidden items-center gap-7 text-sm font-semibold text-black md:flex">
+          {links.map(([label, href]) => (
+            <a
+              key={href}
+              href={href}
+              className="transition-colors hover:text-yellow-400! "
+            >
+              {label}
+            </a>
+          ))}
+        </nav>
+        <a
+          href="#join"
+          className="button hidden bg-[#7c9b76] px-5 py-2.5 text-[13px] text-white md:inline-flex"
+        >
+          Join Us
+        </a>
+        <button
+          aria-label="Open navigation"
+          aria-expanded={open}
+          onClick={() => setOpen(!open)}
+          className="ml-auto grid size-10 place-items-center rounded-full border border-teal-900/15 text-teal-900 md:hidden"
+        >
+          {open ? <X size={19} /> : <Menu size={20} />}
+        </button>
+      </motion.div>
+      <AnimatePresence>
+        {open && (
+          <motion.nav
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            className="mx-auto mt-2 max-w-295 overflow-hidden rounded-3xl border border-teal-900/10 bg-white/95 px-5 shadow-[0_14px_32px_-18px_rgba(15,54,43,.35)] backdrop-blur-md md:hidden"
+          >
+            <div className="grid py-3">
+              {links.map(([label, href]) => (
+                <a
+                  key={href}
+                  href={href}
+                  onClick={() => setOpen(false)}
+                  className="border-b border-teal-900/8 py-3.5 text-sm font-semibold"
+                >
+                  {label}
+                </a>
+              ))}
+              <a
+                href="#join"
+                onClick={() => setOpen(false)}
+                className="button mt-3 bg-[#7c9b76] text-white"
+              >
+                Join Us
+              </a>
+            </div>
+          </motion.nav>
+        )}
+      </AnimatePresence>
+    </motion.header>
+  );
 }
 
 export function LandingPage() {
-  return <main>
-    <section id="top" className="relative flex min-h-[700px] items-center overflow-hidden bg-[#1c493c] pt-16 text-white">
-      <Image src="/assets/hero-steps.png" alt="YCA Ottawa-Gatineau members in traditional Cameroonian dress" fill priority className="object-cover object-[72%_42%]" sizes="100vw" />
-      <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(28,73,60,.91),rgba(28,73,60,.82)_34%,rgba(28,73,60,.57)_52%,rgba(28,73,60,.1)_82%,transparent)]" />
-      <div className="absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-b from-transparent via-[#1c493c]/60 to-[#1c493c]" />
-      <Nav />
-      <div className="page-width relative py-24 sm:py-28"><motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .7 }} className="max-w-[650px]">
-        <span className="inline-block border border-red-500/60 px-3 py-2 text-[10px] font-extrabold tracking-[.22em] text-[#fed104]">YCA OTTAWA-GATINEAU</span>
-        <h1 className="font-display mt-6 text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]"><span className="block text-[#fed104]">Community.</span><span>Culture. Growth.</span></h1>
-        <p className="mt-7 max-w-[650px] text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93">Young Cameroonian Association Ottawa-Gatineau connects, empowers, and supports young Cameroonians in the region. Since launching in August 2025, we&apos;ve hosted 10+ events, reached over 100 young Cameroonians, and partnered with 10+ local organizations.</p>
-        <div className="mt-9 flex flex-wrap gap-3"><a className="button bg-[#fed104] text-[#14240b]" href="#join">Join Us</a><a className="button bg-[#194d02] text-white" href="#join">Get Involved</a><a className="button border border-white/70 text-white" href="#events">Our Events</a></div>
-        <div className="mt-8 flex flex-wrap gap-2.5">{["Community", "Culture", "Growth", "Social events"].map((tag, i) => <span key={tag} className={`rounded-full border px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.16em] ${i === 3 ? "border-[#fed104]/50 text-[#fed104]" : "border-white/30 text-white/85"}`}>{tag}</span>)}</div>
-      </motion.div></div>
-    </section>
-    <div className="h-[3px] bg-[repeating-linear-gradient(90deg,rgba(254,209,4,.5)_0_14px,rgba(252,14,14,.22)_14px_22px,transparent_22px_40px)]" />
-    <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Partners /> <Join /> <Events /> <Footer />
-  </main>;
+  return (
+    <main>
+      <section
+        id="top"
+        className="relative flex min-h-175 items-center overflow-hidden bg-teal-900 pt-16 text-white"
+      >
+        <Image
+          src="/assets/hero-steps.png"
+          alt="YCA OTTAWA members in traditional Cameroonian dress"
+          fill
+          priority
+          className="object-cover object-[72%_42%]"
+          sizes="100vw"
+        />
+        <div className="absolute inset-0 bg-[linear-gradient(100deg,rgba(28,73,60,.91),rgba(28,73,60,.82)_34%,rgba(28,73,60,.57)_52%,rgba(28,73,60,.1)_82%,transparent)]" />
+        <div className="absolute inset-x-0 bottom-0 h-1/3 bg-linear-to-b from-transparent via-teal-900/60 to-teal-900" />
+        <Nav />
+        <div className="page-width relative py-24 sm:py-28">
+          <motion.div
+            initial={{ opacity: 0, y: 18 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            className="max-w-162.5"
+          >
+            <span className="inline-block border border-red-500/60 px-3 py-2 text-[10px] font-extrabold tracking-[.22em] text-yellow-400">
+              YCA OTTAWA
+            </span>
+            <h1 className="font-display mt-6 text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]">
+              <span className="block text-yellow-400">Community.</span>
+              <span>Culture. Growth.</span>
+            </h1>
+            <p className="mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93">
+              Young Cameroonian Association Ottawa-Gatineau connects, empowers,
+              and supports young Cameroonians in the region. Since launching in
+              August 2025, we&apos;ve hosted 10+ events, reached over 100 young
+              Cameroonians, and partnered with 10+ local organizations.
+            </p>
+            <div className="mt-9 flex flex-wrap gap-3">
+              <a className="button bg-yellow-400 text-[#14240b]" href="#join">
+                Join Us
+              </a>
+              <a className="button bg-[#194d02] text-white" href="#join">
+                Get Involved
+              </a>
+              <a
+                className="button border border-white/70 text-white"
+                href="#events"
+              >
+                Our Events
+              </a>
+            </div>
+            <div className="mt-8 flex flex-wrap gap-1.5">
+              {["Community", "Culture", "Growth"].map((tag, i) => (
+                <>
+                  <span
+                    key={tag}
+                    className={` px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/85"}`}
+                  >
+                    {tag}
+                  </span>
+
+                  {i < 2 && <span>-</span>}
+                </>
+              ))}
+            </div>
+          </motion.div>
+        </div>
+      </section>
+      <div className="h-0.75 bg-[repeating-linear-gradient(90deg,rgba(254,209,4,.5)_0_14px,rgba(252,14,14,.22)_14px_22px,transparent_22px_40px)]" />
+      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Partners />{" "}
+      <Join /> <Events /> <Footer />
+    </main>
+  );
 }
 
-function Impact() { const stats = [["10+", "Events hosted"], ["100+", "Young Cameroonians reached"], ["10+", "Local partnerships"], ["2", "Events every month"]]; return <section className="relative overflow-hidden bg-[#f3f1e7] py-20"><div className="absolute inset-0 opacity-[.15] [background-image:radial-gradient(circle_at_14px_14px,rgba(28,73,60,.28)_2px,transparent_2.5px),repeating-linear-gradient(45deg,rgba(28,73,60,.1)_0_2px,transparent_2px_12px)] [background-size:56px_56px,18px_18px]"/><Reveal className="page-width relative"><p className="eyebrow">2025–26 Community Impact</p><h2 className="font-display mt-4 max-w-[16ch] text-[clamp(2rem,3.4vw,2.8rem)] font-extrabold leading-[1.08]">A chapter that shows up, <span className="marker">month after month</span>.</h2><p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-[#4a5164]">Since launching in August 2025, every gathering has brought new faces into the room — students, newcomers and young professionals across Ottawa and Gatineau.</p><div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">{stats.map(([number, label], i) => <Reveal key={label} delay={i*.06}><div className="rounded-[10px] border border-[#1c493c]/20 bg-[#1c493c] p-6"><div className={`font-display text-5xl font-extrabold ${i % 2 ? "text-[#f7f2e9]" : "text-[#fed104]"}`}>{number}</div><div className="mt-3 text-[13px] font-semibold text-[#f7f2e9]/75">{label}</div></div></Reveal>)}</div><p className="mt-6 max-w-xl text-sm leading-relaxed text-[#6a7563]">Counts are chapter-tracked across our monthly meetups, culture nights and partner workshops in Ottawa and Gatineau.</p><a href="#programs" className="button mt-7 bg-[#194d02] text-white">See what we run <ArrowRight className="ml-2" size={16}/></a></Reveal></section> }
-function About() { return <section id="who" className="bg-white py-20"><Reveal className="page-width"><p className="eyebrow">Our identity</p><h2 className="font-display mt-4 text-[clamp(2rem,3.4vw,2.8rem)] font-bold">Who <span className="marker">We Are</span></h2><figure className="relative mt-11 overflow-hidden rounded-2xl border border-[#1c493c]/20 shadow-[0_30px_64px_-42px_rgba(28,73,60,.75)]"><Image src="/assets/team-photo-wide.png" alt="YCA Ottawa-Gatineau members together" width={1200} height={560} className="h-[clamp(260px,34vw,420px)] w-full object-cover object-[center_34%]"/><figcaption className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#1c493c]/90 to-transparent px-7 pb-5 pt-12 text-base italic text-[#f7f2e9]">Our community, together.</figcaption></figure><div className="mt-12 grid gap-12 lg:grid-cols-2"><p className="max-w-[34ch] text-[clamp(1.15rem,1.6vw,1.4rem)] leading-relaxed italic">“YCA Ottawa-Gatineau is a bridge between our Cameroonian roots and our life here — a gathering place where community, culture, and growth come together.”</p><div className="text-[16px] leading-relaxed text-[#4a5164]"><p>We are a growing community of young Cameroonians in Ottawa and Gatineau. We make room for people to belong, share their stories, and build what comes next together.</p><div className="mt-7 rounded bg-[#12362b] p-7 text-[#f7f2e9]"><p className="eyebrow !text-[#fed104]">Our mission</p><p className="mt-3 font-display text-2xl font-bold leading-tight">Create meaningful space for young Cameroonians to connect, celebrate, and thrive.</p></div></div></div></Reveal></section> }
-function Team() { return <section id="team" className="bg-white pb-20"><Reveal className="page-width"><p className="eyebrow">Meet our team</p><h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.65rem)] font-extrabold">The people behind <span className="marker">the chapter</span></h2><div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">{team.map(([image,name,role,copy], i) => <Reveal key={name} delay={i*.05}><article><div className="photo-card aspect-[.85]"><Image src={`/assets/${image}`} alt={name} width={500} height={600} className="size-full object-cover object-top"/></div><h3 className="mt-4 font-display text-xl font-bold">{name}</h3><p className="mt-1 text-xs font-bold uppercase tracking-[.15em] text-[#7c9b76]">{role}</p><p className="mt-2 text-sm leading-relaxed text-[#5a6560]">{copy}</p></article></Reveal>)}</div></Reveal></section> }
-function Programs() { return <section id="programs" className="bg-[#e9e1ce] py-20"><Reveal className="page-width"><p className="eyebrow">What we run</p><h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">Three pillars, <span className="marker">six ways in</span>.</h2><div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">{programs.map(([image,kind,title,meta,copy], i) => <Reveal key={title} delay={i*.04}><article className="photo-card h-full"><div className="relative aspect-[1.7]"><Image src={`/assets/${image}`} alt="" fill className="object-cover"/><span className={`absolute left-3 top-3 rounded px-2 py-1 text-[9px] font-extrabold uppercase tracking-[.14em] ${kind === "Pillar" ? "bg-[#7c9b76] text-white" : "bg-[#e3c067] text-[#1c493c]"}`}>{kind}</span></div><div className="p-5"><p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#8b93a7]">{meta}</p><h3 className="font-display mt-2 text-2xl font-bold">{title}</h3><p className="mt-2 text-sm leading-relaxed text-[#5a6560]">{copy}</p></div></article></Reveal>)}</div></Reveal></section> }
-function Gallery() { return <section id="year" className="bg-white py-20"><Reveal className="page-width"><p className="eyebrow">A year in pictures</p><h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">A year of color, <span className="marker">culture, and connection</span>.</h2><div className="mt-10 grid auto-rows-[145px] grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-[170px]">{gallery.map(([image,alt],i) => <figure key={alt} className={`group relative overflow-hidden rounded-lg ${i===0 ? "col-span-2 row-span-2" : i===3 ? "row-span-2" : ""}`}><Image src={`/assets/${image}`} alt={alt} fill className="object-cover transition duration-500 group-hover:scale-105"/><figcaption className="absolute inset-x-0 bottom-0 translate-y-full bg-[#1c493c]/80 p-3 text-xs font-medium text-white transition duration-300 group-hover:translate-y-0">{alt}</figcaption></figure>)}</div><a href={placeholder} target="_blank" className="button mt-8 border border-[#fed104] text-[#1c493c]">View More Photos <ArrowRight className="ml-2" size={16}/></a></Reveal></section> }
-function Partners() { const logoSet = [...partners, ...partners]; return <section aria-labelledby="partners-heading" className="overflow-hidden border-b border-[#1c493c]/8 bg-white py-16"><Reveal className="page-width"><p className="eyebrow">Our partners</p><h2 id="partners-heading" className="font-display mt-3 text-[clamp(1.8rem,2.7vw,2.2rem)] font-extrabold">Trusted by our <span className="marker">community &amp; partners</span>.</h2></Reveal><div className="partner-marquee mt-10" aria-label="Partner organizations"><div className="partner-track">{logoSet.map((partner, index) => <span className="partner-logo" key={`${partner}-${index}`}>{partner}</span>)}</div></div></section> }
-function Join() { return <section id="join" className="bg-[#1c493c] py-20 text-white"><Reveal className="page-width"><p className="eyebrow !text-white/75">Get involved</p><h2 className="font-display mt-4 max-w-xl text-[clamp(2.1rem,3.6vw,2.9rem)] font-extrabold leading-[1.06]">Join YCA Ottawa-Gatineau.</h2><p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-white/88">Two ways in: drop into the WhatsApp community to see what&apos;s next, or fill the short form and we&apos;ll reach out before the next gathering.</p><div className="mt-8 flex flex-wrap gap-3"><a className="button bg-[#f7f2e9] text-[#1c493c]" href={placeholder} target="_blank">Join WhatsApp</a><a className="button bg-[#e3c067] text-[#1c493c]" href={placeholder} target="_blank">Membership form</a><a className="button border border-white/70 text-white" href="mailto:ycaottawagatineau@gmail.com"><Mail className="mr-2" size={16}/>Email the team</a></div></Reveal></section> }
-function Events() { const events = [["Next Social Saturday", "Saturday · 2:00 PM", "A casual afternoon to connect, laugh, and meet someone new."], ["Newcomer mixer", "Thursday · 6:30 PM", "A welcome table for new members and familiar faces."], ["Culture & conversations", "Sunday · 3:00 PM", "Food, music, and stories from our community."]]; return <section id="events" className="bg-white py-20"><Reveal className="page-width"><div className="grid gap-8 lg:grid-cols-[.78fr_1.22fr]"><div><p className="eyebrow">Up next</p><h2 className="font-display mt-4 max-w-[18ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold"><span className="marker">Two gatherings</span> a month, all year long.</h2><div className="mt-7 flex flex-wrap gap-2">{["Social Saturday", "Barbecue", "Hike", "Networking"].map((tag,i)=><span key={tag} className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${i%2 ? "bg-[#fed104] text-[#14240b]" : "bg-[#194d02] text-white"}`}>{tag}</span>)}</div></div><div className="grid gap-3">{events.map(([title,date,description]) => <a href={placeholder} target="_blank" className="group rounded-lg border border-[#1c493c]/15 p-5 transition hover:border-[#7c9b76] hover:shadow-lg" key={title}><div className="flex gap-4"><CalendarDays className="mt-1 shrink-0 text-[#7c9b76]"/><div><p className="text-xs font-bold uppercase tracking-[.14em] text-[#7c9b76]">{date}</p><h3 className="font-display mt-1 text-xl font-bold">{title}</h3><p className="mt-2 text-sm text-[#5a6560]">{description}</p></div><ArrowRight className="ml-auto mt-1 shrink-0 transition-transform group-hover:translate-x-1" size={17}/></div></a>)}</div></div><a className="button mt-7 border border-[#194d02] text-[#194d02]" href={placeholder} target="_blank">See all events <ArrowRight className="ml-2" size={16}/></a></Reveal></section> }
-function Footer() { return <footer className="bg-[#efede1] py-12 pb-7"><div className="page-width grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]"><div><Image src="/assets/yca-logo.png" alt="YCA Ottawa-Gatineau" width={132} height={54} className="h-12 w-auto mix-blend-multiply"/><p className="mt-4 max-w-xs text-sm leading-relaxed text-[#4a5164]">Community, culture, and growth for young Cameroonians in Ottawa-Gatineau.</p></div><div><p className="eyebrow">Explore</p><div className="mt-4 grid gap-2.5 text-sm text-[#3b4256]"><a href="#who">Our Story</a><a href="#programs">Programs</a><a href="#year">Gallery</a><a href="#events">Events</a></div></div><div><p className="eyebrow">Connect</p><div className="mt-4 grid gap-2.5 text-sm"><a className="font-semibold" href="mailto:ycaottawagatineau@gmail.com">ycaottawagatineau@gmail.com</a><a href={placeholder} target="_blank">@ycaottawagatineau</a></div></div></div><div className="page-width mt-10 border-t border-[#1c493c]/10 pt-5 text-xs text-[#6a7563]">© 2026 YCA Ottawa-Gatineau. Made for community.</div></footer> }
+function Impact() {
+  const stats = [
+    ["10+", "Events hosted"],
+    ["100+", "Young Cameroonians reached"],
+    ["10+", "Local partnerships"],
+    ["2", "Events every month"],
+  ];
+  return (
+    <section className="relative overflow-hidden bg-[#f3f1e7] py-20">
+      <div className="absolute inset-0 opacity-[.15] bg-[radial-gradient(circle_at_14px_14px,rgba(28,73,60,.28)_2px,transparent_2.5px),repeating-linear-gradient(45deg,rgba(28,73,60,.1)_0_2px,transparent_2px_12px)] bg-size-[56px_56px,18px_18px]" />
+      <Reveal className="page-width relative">
+        <p className="eyebrow">2025–26 Community Impact</p>
+        <h2 className="font-display mt-4 max-w-[16ch] text-[clamp(2rem,3.4vw,2.8rem)] font-extrabold leading-[1.08]">
+          A chapter that shows up,{" "}
+          <span className="marker">month after month</span>.
+        </h2>
+        <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-[#4a5164]">
+          Since launching in August 2025, every gathering has brought new faces
+          into the room — students, newcomers and young professionals across
+          Ottawa and Gatineau.
+        </p>
+        <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {stats.map(([number, label], i) => (
+            <Reveal key={label} delay={i * 0.06}>
+              <div className="rounded-[10px] border border-teal-900/20 bg-teal-900 p-6">
+                <div
+                  className={`font-display text-5xl font-extrabold ${i % 2 ? "text-[#f7f2e9]" : "text-yellow-400"}`}
+                >
+                  {number}
+                </div>
+                <div className="mt-3 text-[13px] font-semibold text-[#f7f2e9]/75">
+                  {label}
+                </div>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#6a7563]">
+          Counts are chapter-tracked across our monthly meetups, culture nights
+          and partner workshops in Ottawa and Gatineau.
+        </p>
+        <a href="#programs" className="button mt-7 bg-[#194d02] ">
+          <span className=" text-white flex gap-2 font-medium">
+            See what we run <ArrowRight className="ml-2" size={16} />
+          </span>
+        </a>
+      </Reveal>
+    </section>
+  );
+}
+function About() {
+  return (
+    <section id="who" className="bg-white py-20">
+      <Reveal className="page-width">
+        <p className="eyebrow">Our identity</p>
+        <h2 className="font-display mt-4 text-[clamp(2rem,3.4vw,2.8rem)] font-bold">
+          Who <span className="marker">We Are</span>
+        </h2>
+        <figure className="relative mt-11 overflow-hidden rounded-2xl border border-teal-900/20 shadow-[0_30px_64px_-42px_rgba(28,73,60,.75)]">
+          <Image
+            src="/assets/team-photo-wide.png"
+            alt="YCA OTTAWA members together"
+            width={1200}
+            height={560}
+            className="h-[clamp(260px,34vw,420px)] w-full object-cover object-[center_34%]"
+          />
+          <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-teal-900/90 to-transparent px-7 pb-5 pt-12 text-base italic text-[#f7f2e9]">
+            Our community, together.
+          </figcaption>
+        </figure>
+        <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
+          <div>
+            <span className="font-display text-6xl leading-none text-yellow-400">
+              &ldquo;
+            </span>
+            <p className="-mt-4 max-w-[38ch] text-[clamp(1.1rem,1.5vw,1.35rem)] italic leading-relaxed text-teal-900">
+              YCA OTTAWA is a bridge between our Cameroonian roots and our life
+              here — a gathering place where community, culture, and growth come
+              together.
+            </p>
+            <div className="mt-7 flex items-center gap-4 rounded-2xl bg-[#f3f1e7] p-6">
+              <div className="shrink-0">
+                <Image
+                  src="/assets/yca-logo.png"
+                  alt="YCA logo"
+                  width={72}
+                  height={72}
+                  className="h-14 w-auto mix-blend-multiply"
+                />
+              </div>
+              <p className="text-sm leading-relaxed text-[#4a5164]">
+                <div className="mt-2 flex gap-1 mb-2">
+                  <span className="size-2.5 rounded-sm bg-teal-900" />
+                  <span className="size-2.5 rounded-sm bg-red-600" />
+                  <span className="size-2.5 rounded-sm bg-yellow-400" />
+                </div>
+                Our logo&apos;s running figure represents{" "}
+                <strong className="text-teal-900">youth in motion;</strong>
+                always learning, connecting, and moving forward together,
+                carrying the colors of home wherever we go.
+              </p>
+            </div>
+            <p className="mt-7 text-[15px] leading-relaxed text-[#4a5164]">
+              Through community, culture, and growth, YCA OTTAWA strengthens the
+              bonds that unite young Cameroonians across the region.
+            </p>
+          </div>
+          <div className="rounded-2xl bg-[#12362b] -rotate-2 p-7 sm:p-8">
+            <h3 className="font-display text-2xl font-bold text-white">
+              Core Values
+            </h3>
+            <div className="mt-6 grid gap-5">
+              {values.map(([Icon, title, copy], i) => (
+                <div
+                  key={title}
+                  className={`flex gap-4 pb-5 ${i < values.length - 1 ? "border-b border-white/10" : ""}`}
+                >
+                  <div className="grid size-11 shrink-0 place-items-center rounded-lg border border-yellow-400/50 text-yellow-400">
+                    <Icon size={20} />
+                  </div>
+                  <div>
+                    <p className="font-semibold text-white">{title}</p>
+                    <p className="mt-1 text-sm leading-relaxed text-yellow-400/80">
+                      {copy}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+function Team() {
+  return (
+    <section id="team" className="bg-white pb-20">
+      <Reveal className="page-width">
+        <p className="eyebrow">Meet our team</p>
+        <h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.65rem)] font-extrabold">
+          The people behind <span className="marker">the chapter</span>
+        </h2>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+          {team.map(([image, name, role, copy], i) => (
+            <Reveal key={name} delay={i * 0.05}>
+              <article>
+                <div className="photo-card aspect-[.85]">
+                  <Image
+                    src={`/assets/${image}`}
+                    alt={name}
+                    width={500}
+                    height={600}
+                    className="size-full object-cover object-top"
+                  />
+                </div>
+                <h3 className="mt-4 font-display text-xl font-bold">{name}</h3>
+                <p className="mt-1 text-xs font-bold uppercase tracking-[.15em] text-[#7c9b76]">
+                  {role}
+                </p>
+                <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
+                  {copy}
+                </p>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+function Programs() {
+  return (
+    <section id="programs" className="bg-[#e9e1ce] py-20">
+      <Reveal className="page-width">
+        <p className="eyebrow">What we run</p>
+        <h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
+          Three pillars, <span className="marker">six ways in</span>.
+        </h2>
+        <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+          {programs.map(([image, kind, title, meta, copy], i) => (
+            <Reveal key={title} delay={i * 0.04}>
+              <article className="photo-card h-full">
+                <div className="relative aspect-[1.7]">
+                  <Image
+                    src={`/assets/${image}`}
+                    alt=""
+                    fill
+                    className="object-cover"
+                  />
+                  <span
+                    className={`absolute left-3 top-3 rounded px-2 py-1 text-[9px] font-extrabold uppercase tracking-[.14em] ${kind === "Pillar" ? "bg-[#7c9b76] text-white" : "bg-[#e3c067] text-teal-900"}`}
+                  >
+                    {kind}
+                  </span>
+                </div>
+                <div className="p-5">
+                  <p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#8b93a7]">
+                    {meta}
+                  </p>
+                  <h3 className="font-display mt-2 text-2xl font-bold">
+                    {title}
+                  </h3>
+                  <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
+                    {copy}
+                  </p>
+                </div>
+              </article>
+            </Reveal>
+          ))}
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+function Gallery() {
+  return (
+    <section id="year" className="bg-white py-20">
+      <Reveal className="page-width">
+        <p className="eyebrow">A year in pictures</p>
+        <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
+          A year of color,{" "}
+          <span className="marker">culture, and connection</span>.
+        </h2>
+        <div className="mt-10 grid auto-rows-36.25 grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-42.5">
+          {gallery.map(([image, alt], i) => (
+            <figure
+              key={alt}
+              className={`group relative overflow-hidden rounded-lg ${i === 0 ? "col-span-2 row-span-2" : i === 3 ? "row-span-2" : ""}`}
+            >
+              <Image
+                src={`/assets/${image}`}
+                alt={alt}
+                fill
+                className="object-cover transition duration-500 group-hover:scale-105"
+              />
+              <figcaption className="absolute inset-x-0 bottom-0 translate-y-full bg-teal-900/80 p-3 text-xs font-medium text-white transition duration-300 group-hover:translate-y-0">
+                {alt}
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+        <a
+          href={placeholder}
+          target="_blank"
+          className="button mt-8 border border-yellow-400 text-teal-900"
+        >
+          View More Photos <ArrowRight className="ml-2" size={16} />
+        </a>
+      </Reveal>
+    </section>
+  );
+}
+function Partners() {
+  const logoSet = [...partners, ...partners];
+  return (
+    <section
+      aria-labelledby="partners-heading"
+      className="overflow-hidden border-b border-teal-900/8 bg-white py-16"
+    >
+      <Reveal className="page-width">
+        <p className="eyebrow">Our partners</p>
+        <h2
+          id="partners-heading"
+          className="font-display mt-3 text-[clamp(1.8rem,2.7vw,2.2rem)] font-extrabold"
+        >
+          Trusted by our{" "}
+          <span className="marker">community &amp; partners</span>.
+        </h2>
+      </Reveal>
+      <div className="partner-marquee mt-10" aria-label="Partner organizations">
+        <div className="partner-track">
+          {logoSet.map((partner, index) => (
+            <span className="partner-logo" key={`${partner}-${index}`}>
+              {partner}
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+function Join() {
+  return (
+    <section id="join" className="bg-teal-900 py-20 text-white">
+      <Reveal className="page-width">
+        <p className="eyebrow text-white/75!">Get involved</p>
+        <h2 className="font-display mt-4 max-w-xl text-[clamp(2.1rem,3.6vw,2.9rem)] font-extrabold leading-[1.06]">
+          Join YCA OTTAWA.
+        </h2>
+        <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-white/88">
+          Two ways in: drop into the WhatsApp community to see what&apos;s next,
+          or fill the short form and we&apos;ll reach out before the next
+          gathering.
+        </p>
+        <div className="mt-8 flex flex-wrap gap-3">
+          <a
+            className="button bg-[#f7f2e9] text-teal-900"
+            href={placeholder}
+            target="_blank"
+          >
+            Join WhatsApp
+          </a>
+          <a
+            className="button bg-[#e3c067] text-teal-900"
+            href={placeholder}
+            target="_blank"
+          >
+            Membership form
+          </a>
+          <a
+            className="button border border-white/70 text-white"
+            href="mailto:ycaottawagatineau@gmail.com"
+          >
+            <Mail className="mr-2" size={16} />
+            Email the team
+          </a>
+        </div>
+      </Reveal>
+    </section>
+  );
+}
+function Events() {
+  const events = [
+    [
+      "Next Social Saturday",
+      "Saturday · 2:00 PM",
+      "A casual afternoon to connect, laugh, and meet someone new.",
+    ],
+    [
+      "Newcomer mixer",
+      "Thursday · 6:30 PM",
+      "A welcome table for new members and familiar faces.",
+    ],
+    [
+      "Culture & conversations",
+      "Sunday · 3:00 PM",
+      "Food, music, and stories from our community.",
+    ],
+  ];
+  return (
+    <section id="events" className="bg-white py-20">
+      <Reveal className="page-width">
+        <div className="grid gap-8 lg:grid-cols-[.78fr_1.22fr]">
+          <div>
+            <p className="eyebrow">Up next</p>
+            <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold">
+              Two gatherings a month,{" "}
+              <span className="marker">all year long.</span>
+            </h2>
+            <div className="mt-7 flex flex-wrap gap-2">
+              {["Social Saturday", "Barbecue", "Hike", "Networking"].map(
+                (tag, i) => (
+                  <span
+                    key={tag}
+                    className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${i % 2 ? "bg-yellow-400 text-[#14240b]" : "bg-[#194d02] text-white"}`}
+                  >
+                    {tag}
+                  </span>
+                ),
+              )}
+            </div>
+          </div>
+          <div className="grid gap-3">
+            {events.map(([title, date, description]) => (
+              <a
+                href={placeholder}
+                target="_blank"
+                className="group rounded-lg border border-teal-900/15 p-5 transition hover:border-[#7c9b76] hover:shadow-lg"
+                key={title}
+              >
+                <div className="flex gap-4">
+                  <CalendarDays className="mt-1 shrink-0 text-[#7c9b76]" />
+                  <div>
+                    <p className="text-xs font-bold uppercase tracking-[.14em] text-[#7c9b76]">
+                      {date}
+                    </p>
+                    <h3 className="font-display mt-1 text-xl font-bold">
+                      {title}
+                    </h3>
+                    <p className="mt-2 text-sm text-[#5a6560]">{description}</p>
+                  </div>
+                  <ArrowRight
+                    className="ml-auto mt-1 shrink-0 transition-transform group-hover:translate-x-1"
+                    size={17}
+                  />
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+        <a
+          className="button mt-7 border border-[#194d02] text-[#194d02]"
+          href={placeholder}
+          target="_blank"
+        >
+          See all events <ArrowRight className="ml-2" size={16} />
+        </a>
+      </Reveal>
+    </section>
+  );
+}
+function Footer() {
+  return (
+    <footer className="bg-[#7c9b76] py-14 pb-8 text-white">
+      <div className="page-width grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
+        <div>
+          <Image
+            src="/assets/yca-logo.png"
+            alt="YCA OTTAWA"
+            width={132}
+            height={54}
+            className="h-12 w-auto mix-blend-multiply"
+          />
+          <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/85">
+            Young Cameroonian Association | Community. Culture. Growth.
+          </p>
+        </div>
+        <div>
+          <p className="eyebrow text-yellow-400!">Explore</p>
+          <div className="mt-4 grid gap-2.5 text-sm text-white/90">
+            {[
+              ["Our Story", "#who"],
+              ["Programs", "#programs"],
+              ["Gallery", "#year"],
+              ["Events", "#events"],
+            ].map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                className="transition-color hover:text-yellow-400! "
+              >
+                {label}
+              </a>
+            ))}
+          </div>
+        </div>
+        <div>
+          <p className="eyebrow text-yellow-400!">Connect</p>
+          <div className="mt-4 grid gap-2.5 text-sm text-white/90">
+            <a
+              className="font-bold text-yellow-400"
+              href="mailto:ycaottawagatineau@gmail.com"
+            >
+              ycaottawagatineau@gmail.com
+            </a>
+            <a href={placeholder} target="_blank">
+              @ycaottawagatineau
+            </a>
+            <p>Ottawa &amp; Gatineau, Canada</p>
+          </div>
+        </div>
+      </div>
+      <div className="page-width mt-10 flex flex-col gap-2 border-t border-white/20 pt-5 text-xs text-white/75 sm:flex-row sm:items-center sm:justify-between">
+        <p>© 2026 YCA OTTAWA. A volunteer-run chapter.</p>
+        <p>Built by the community, for the community.</p>
+      </div>
+    </footer>
+  );
+}
