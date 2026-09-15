@@ -4,10 +4,8 @@ import Image from "next/image";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import {
   ArrowRight,
-  CalendarDays,
   GraduationCap,
   Handshake,
-  Mail,
   Menu,
   Sparkles,
   Users,
@@ -93,13 +91,13 @@ const programs = [
   ],
 ] as const;
 const gallery = [
-  ["audience-wide.png", "Community Launch — Aug 2025"],
-  ["two-women-portrait.png", "Culture Night — Nov 2025"],
-  ["team-group.png", "Cultural Festival — Sept 2025"],
-  ["speaker-mic.png", "Youth Panel — Oct 2025"],
-  ["team-group-2.png", "Chapter Team — Winter 2026"],
-  ["two-men-smiling.png", "Networking Mixer — Feb 2026"],
-  ["conversation.png", "Social Saturday — Jan 2026"],
+  ["audience-wide.png", "Community Launch - Aug 2025"],
+  ["two-women-portrait.png", "Culture Night - Nov 2025"],
+  ["team-group.png", "Cultural Festival - Sept 2025"],
+  ["speaker-mic.png", "Youth Panel - Oct 2025"],
+  ["team-group-2.png", "Chapter Team - Winter 2026"],
+  ["two-men-smiling.png", "Networking Mixer - Feb 2026"],
+  ["conversation.png", "Social Saturday - Jan 2026"],
 ] as const;
 const partners = [
   "Bytown Career Co.",
@@ -413,7 +411,7 @@ function About() {
             </span>
             <p className="-mt-4 max-w-[38ch] text-[clamp(1.1rem,1.5vw,1.35rem)] italic leading-relaxed text-teal-900">
               YCA OTTAWA is a bridge between our Cameroonian roots and our life
-              here — a gathering place where community, culture, and growth come
+              here; a gathering place where community, culture, and growth come
               together.
             </p>
             <div className="mt-7 flex items-center gap-4 rounded-2xl bg-[#f3f1e7] p-6">
@@ -426,17 +424,19 @@ function About() {
                   className="h-14 w-auto mix-blend-multiply"
                 />
               </div>
-              <p className="text-sm leading-relaxed text-[#4a5164]">
-                <div className="mt-2 flex gap-1 mb-2">
+              <div>
+                <div className="mb-2 flex gap-1">
                   <span className="size-2.5 rounded-sm bg-teal-900" />
                   <span className="size-2.5 rounded-sm bg-red-600" />
                   <span className="size-2.5 rounded-sm bg-yellow-400" />
                 </div>
-                Our logo&apos;s running figure represents{" "}
-                <strong className="text-teal-900">youth in motion;</strong>
-                always learning, connecting, and moving forward together,
-                carrying the colors of home wherever we go.
-              </p>
+                <p className="text-sm leading-relaxed text-[#4a5164]">
+                  Our logo&apos;s running figure represents{" "}
+                  <strong className="text-teal-900">youth in motion;</strong>{" "}
+                  always learning, connecting, and moving forward together,
+                  carrying the colors of home wherever we go.
+                </p>
+              </div>
             </div>
             <p className="mt-7 text-[15px] leading-relaxed text-[#4a5164]">
               Through community, culture, and growth, YCA OTTAWA strengthens the
@@ -558,7 +558,7 @@ function Gallery() {
         <p className="eyebrow">A year in pictures</p>
         <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
           A year of color,{" "}
-          <span className="marker">culture, and connection</span>.
+          <span className="marker">culture and connection</span>.
         </h2>
         <div className="mt-10 grid auto-rows-36.25 grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-42.5">
           {gallery.map(([image, alt], i) => (
@@ -578,13 +578,15 @@ function Gallery() {
             </figure>
           ))}
         </div>
-        <a
-          href={placeholder}
-          target="_blank"
-          className="button mt-8 border border-yellow-400 text-teal-900"
-        >
-          View More Photos <ArrowRight className="ml-2" size={16} />
-        </a>
+        <div className="text-center">
+          <a
+            href={placeholder}
+            target="_blank"
+            className="button mt-8 border border-yellow-400 text-teal-900"
+          >
+            View More Photos <ArrowRight className="ml-2" size={16} />
+          </a>
+        </div>
       </Reveal>
     </section>
   );
@@ -619,40 +621,65 @@ function Partners() {
   );
 }
 function Join() {
+  const involve = [
+    {
+      title: "Members",
+      copy: "Free to join, ages 16-35, Cameroonian by birth, heritage or heart.",
+      cta: "Join WhatsApp",
+      href: placeholder,
+      variant: "green",
+    },
+    {
+      title: "Newcomers",
+      copy: "Just landed in Ottawa or Gatineau? Tell us a bit and we'll pair you with someone.",
+      cta: "Membership form",
+      href: placeholder,
+      variant: "gold",
+    },
+    {
+      title: "Partners",
+      copy: "Host a workshop, sponsor an event, or bring mentors to a hike.",
+      cta: "Email the team",
+      href: "mailto:ycaottawagatineau@gmail.com",
+      variant: "outline",
+    },
+  ] as const;
   return (
-    <section id="join" className="bg-teal-900 py-20 text-white">
+    <section id="join" className="bg-white py-20">
       <Reveal className="page-width">
-        <p className="eyebrow text-white/75!">Get involved</p>
-        <h2 className="font-display mt-4 max-w-xl text-[clamp(2.1rem,3.6vw,2.9rem)] font-extrabold leading-[1.06]">
-          Join YCA OTTAWA.
+        <p className="eyebrow">Get involved</p>
+        <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
+          Join YCA <span className="marker">OTTAWA</span>.
         </h2>
-        <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-white/88">
+        <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
           Two ways in: drop into the WhatsApp community to see what&apos;s next,
           or fill the short form and we&apos;ll reach out before the next
           gathering.
         </p>
-        <div className="mt-8 flex flex-wrap gap-3">
-          <a
-            className="button bg-[#f7f2e9] text-teal-900"
-            href={placeholder}
-            target="_blank"
-          >
-            Join WhatsApp
-          </a>
-          <a
-            className="button bg-[#e3c067] text-teal-900"
-            href={placeholder}
-            target="_blank"
-          >
-            Membership form
-          </a>
-          <a
-            className="button border border-white/70 text-white"
-            href="mailto:ycaottawagatineau@gmail.com"
-          >
-            <Mail className="mr-2" size={16} />
-            Email the team
-          </a>
+        <div className="mt-9 grid gap-5 sm:grid-cols-3">
+          {involve.map(({ title, copy, cta, href, variant }) => (
+            <div key={title} className="rounded-2xl bg-[#f3f1e7] p-7">
+              <h3 className="font-display text-xl font-bold text-teal-900">
+                {title}
+              </h3>
+              <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
+                {copy}
+              </p>
+              <a
+                className={`button mt-6 ${
+                  variant === "green"
+                    ? "bg-[#194d02] text-white!"
+                    : variant === "gold"
+                      ? "bg-[#e3c067] text-teal-900"
+                      : "border border-teal-900 text-teal-900"
+                }`}
+                href={href}
+                target={href === placeholder ? "_blank" : undefined}
+              >
+                {cta}
+              </a>
+            </div>
+          ))}
         </div>
       </Reveal>
     </section>
@@ -660,32 +687,53 @@ function Join() {
 }
 function Events() {
   const events = [
-    [
-      "Next Social Saturday",
-      "Saturday · 2:00 PM",
-      "A casual afternoon to connect, laugh, and meet someone new.",
-    ],
-    [
-      "Newcomer mixer",
-      "Thursday · 6:30 PM",
-      "A welcome table for new members and familiar faces.",
-    ],
-    [
-      "Culture & conversations",
-      "Sunday · 3:00 PM",
-      "Food, music, and stories from our community.",
-    ],
-  ];
+    {
+      date: "SEP 05",
+      title: "Back-to-school welcome",
+      meta: "Ottawa · new students & newcomers",
+      tag: "Social Saturday",
+    },
+    {
+      date: "SEP 20",
+      title: "CV & interview clinic",
+      meta: "Gatineau · with a local partner",
+      tag: "Networking",
+    },
+    {
+      date: "OCT 04",
+      title: "Culture night, food & makossa",
+      meta: "Ottawa · bring a dish",
+      tag: "Social Saturday",
+    },
+  ] as const;
+  const tagStyle = (tag: string) =>
+    tag === "Social Saturday" || tag === "Hike"
+      ? "bg-[#194d02] text-white"
+      : "bg-yellow-400 text-[#14240b]";
   return (
     <section id="events" className="bg-white py-20">
       <Reveal className="page-width">
-        <div className="grid gap-8 lg:grid-cols-[.78fr_1.22fr]">
+        <div className="grid gap-10 lg:grid-cols-2">
           <div>
             <p className="eyebrow">Up next</p>
             <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold">
-              Two gatherings a month,{" "}
-              <span className="marker">all year long.</span>
+              <span className="marker">Two gatherings</span> a month, all year
+              long.
             </h2>
+            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#5a6560]">
+              Everything is announced in the WhatsApp community first. Newcomers
+              are always welcome to their first event without signing up for
+              anything.
+            </p>
+            <div className="mt-7 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5">
+              <h3 className="font-display text-lg font-bold text-teal-900">
+                New events added monthly
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
+                Socials, barbecues, hikes and networking nights — rotating
+                between Ottawa and Gatineau.
+              </p>
+            </div>
             <div className="mt-7 flex flex-wrap gap-2">
               {["Social Saturday", "Barbecue", "Hike", "Networking"].map(
                 (tag, i) => (
@@ -699,41 +747,36 @@ function Events() {
               )}
             </div>
           </div>
-          <div className="grid gap-3">
-            {events.map(([title, date, description]) => (
-              <a
-                href={placeholder}
-                target="_blank"
-                className="group rounded-lg border border-teal-900/15 p-5 transition hover:border-[#7c9b76] hover:shadow-lg"
-                key={title}
-              >
-                <div className="flex gap-4">
-                  <CalendarDays className="mt-1 shrink-0 text-[#7c9b76]" />
+          <div>
+            <div className="divide-y divide-teal-900/10 border-t border-teal-900/10">
+              {events.map(({ date, title, meta, tag }) => (
+                <div key={title} className="flex gap-6 py-5">
+                  <p className="w-16 shrink-0 text-xs font-bold uppercase tracking-widest text-[#194d02]">
+                    {date}
+                  </p>
                   <div>
-                    <p className="text-xs font-bold uppercase tracking-[.14em] text-[#7c9b76]">
-                      {date}
-                    </p>
-                    <h3 className="font-display mt-1 text-xl font-bold">
+                    <h3 className="font-display text-lg font-bold text-teal-900">
                       {title}
                     </h3>
-                    <p className="mt-2 text-sm text-[#5a6560]">{description}</p>
+                    <p className="mt-1 text-sm text-[#5a6560]">{meta}</p>
+                    <span
+                      className={`mt-3 inline-block rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[.12em] ${tagStyle(tag)}`}
+                    >
+                      {tag}
+                    </span>
                   </div>
-                  <ArrowRight
-                    className="ml-auto mt-1 shrink-0 transition-transform group-hover:translate-x-1"
-                    size={17}
-                  />
                 </div>
-              </a>
-            ))}
+              ))}
+            </div>
+            <a
+              className="button mt-7 border border-teal-900 text-teal-900"
+              href={placeholder}
+              target="_blank"
+            >
+              See all events <ArrowRight className="ml-2" size={16} />
+            </a>
           </div>
         </div>
-        <a
-          className="button mt-7 border border-[#194d02] text-[#194d02]"
-          href={placeholder}
-          target="_blank"
-        >
-          See all events <ArrowRight className="ml-2" size={16} />
-        </a>
       </Reveal>
     </section>
   );
