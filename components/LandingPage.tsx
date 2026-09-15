@@ -154,6 +154,11 @@ function Reveal({
 function Nav() {
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
+  const reduceMotion = useReducedMotion();
+  const layoutTransition = {
+    duration: reduceMotion ? 0 : 0.45,
+    ease: [0.22, 1, 0.36, 1] as const,
+  };
   const links = [
     ["Our Story", "#who"],
     ["Programs", "#programs"],
@@ -183,9 +188,22 @@ function Nav() {
     };
   }, [open]);
   return (
-    <header className={`nav-header${isScrolled ? " is-scrolled" : ""}`}>
-      <div className={`nav-bar${isScrolled ? " is-scrolled" : ""}`}>
-        <a href="#top" aria-label="YCA OTTAWA home">
+    <motion.header
+      layout={!reduceMotion}
+      transition={{ layout: layoutTransition }}
+      className={`nav-header${isScrolled ? " is-scrolled" : ""}`}
+    >
+      <motion.div
+        layout={!reduceMotion}
+        transition={{ layout: layoutTransition }}
+        className={`nav-bar${isScrolled ? " is-scrolled" : ""}`}
+      >
+        <motion.a
+          layout={!reduceMotion}
+          transition={{ layout: layoutTransition }}
+          href="#top"
+          aria-label="YCA OTTAWA home"
+        >
           <Image
             src="/assets/yca-logo.png"
             alt="YCA OTTAWA"
@@ -194,8 +212,12 @@ function Nav() {
             className="h-11 w-auto mix-blend-multiply"
             priority
           />
-        </a>
-        <nav className="ml-auto hidden items-center gap-7 text-sm font-semibold text-black md:flex">
+        </motion.a>
+        <motion.nav
+          layout={!reduceMotion}
+          transition={{ layout: layoutTransition }}
+          className="ml-auto hidden items-center gap-7 text-sm font-semibold text-black md:flex"
+        >
           {links.map(([label, href]) => (
             <a
               key={href}
@@ -205,8 +227,12 @@ function Nav() {
               {label}
             </a>
           ))}
-        </nav>
-        <div className="flex items-center  gap-3">
+        </motion.nav>
+        <motion.div
+          layout={!reduceMotion}
+          transition={{ layout: layoutTransition }}
+          className="flex items-center  gap-3"
+        >
           <a
             href="#join"
             className="button hidden bg-[#7c9b76] px-5 py-1.5  text-[13px] text-white md:inline-flex"
@@ -221,8 +247,8 @@ function Nav() {
           >
             {open ? <X size={19} /> : <Menu size={20} />}
           </button>
-        </div>
-      </div>
+        </motion.div>
+      </motion.div>
       <AnimatePresence>
         {open && (
           <>
@@ -282,7 +308,7 @@ function Nav() {
           </>
         )}
       </AnimatePresence>
-    </header>
+    </motion.header>
   );
 }
 
