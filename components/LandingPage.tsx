@@ -8,14 +8,7 @@ import {
   useInView,
   useReducedMotion,
 } from "motion/react";
-import {
-  ArrowRight,
-  Compass,
-  Handshake,
-  Menu,
-  Users,
-  X,
-} from "lucide-react";
+import { ArrowRight, Compass, Handshake, Users, X } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 const easeCalm = [0.22, 1, 0.36, 1] as const;
@@ -294,72 +287,102 @@ function Nav() {
     };
   }, [open]);
   return (
-    <motion.header
-      layout={!reduceMotion}
-      initial={reduceMotion ? false : { opacity: 0, y: -10 }}
-      animate={{ opacity: 1, y: 0 }}
-      transition={{
-        layout: layoutTransition,
-        default: { duration: 0.6, ease: easeCalm },
-      }}
-      className={`nav-header${isScrolled ? " is-scrolled" : ""}`}
-    >
-      <motion.div
+    <>
+      <motion.header
         layout={!reduceMotion}
-        transition={{ layout: layoutTransition }}
-        className={`nav-bar${isScrolled ? " is-scrolled" : ""}`}
+        initial={reduceMotion ? false : { opacity: 0, y: -10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          layout: layoutTransition,
+          default: { duration: 0.6, ease: easeCalm },
+        }}
+        className={`nav-header${isScrolled ? " is-scrolled" : ""}`}
       >
-        <motion.a
-          layout={!reduceMotion}
-          transition={{ layout: layoutTransition }}
-          href="#top"
-          aria-label="YCA OTTAWA home"
-        >
-          <Image
-            src="/assets/yca-logo.png"
-            alt="YCA OTTAWA"
-            width={125}
-            height={48}
-            className="h-11 w-auto mix-blend-multiply"
-            priority
-          />
-        </motion.a>
-        <motion.nav
-          layout={!reduceMotion}
-          transition={{ layout: layoutTransition }}
-          className="ml-auto hidden items-center gap-7 text-sm font-semibold text-black md:flex"
-        >
-          {links.map(([label, href]) => (
-            <a
-              key={href}
-              href={href}
-              className="transition-colors hover:text-yellow-400! "
-            >
-              {label}
-            </a>
-          ))}
-        </motion.nav>
         <motion.div
           layout={!reduceMotion}
           transition={{ layout: layoutTransition }}
-          className="flex items-center  gap-3"
+          className={`nav-bar${isScrolled ? " is-scrolled" : ""}`}
         >
-          <a
-            href="#join"
-            className="button hidden bg-[#7c9b76] px-5 py-2!  text-xs text-white md:inline-flex"
+          <motion.a
+            layout={!reduceMotion}
+            transition={{ layout: layoutTransition }}
+            href="#top"
+            aria-label="YCA OTTAWA home"
           >
-            Join Us
-          </a>
-          <button
-            aria-label="Open navigation"
-            aria-expanded={open}
-            onClick={() => setOpen(!open)}
-            className="ml-auto grid size-10 place-items-center rounded-full border border-teal-900/15 text-teal-900 md:hidden"
+            <Image
+              src="/assets/yca-logo.png"
+              alt="YCA OTTAWA"
+              width={125}
+              height={48}
+              className="h-11 w-auto mix-blend-multiply"
+              priority
+            />
+          </motion.a>
+          <motion.nav
+            layout={!reduceMotion}
+            transition={{ layout: layoutTransition }}
+            className="ml-auto hidden items-center gap-7 text-sm font-semibold text-black md:flex"
           >
-            {open ? <X size={19} /> : <Menu size={20} />}
-          </button>
+            {links.map(([label, href]) => (
+              <a
+                key={href}
+                href={href}
+                className="transition-colors hover:text-yellow-400! "
+              >
+                {label}
+              </a>
+            ))}
+          </motion.nav>
+          <motion.div
+            layout={!reduceMotion}
+            transition={{ layout: layoutTransition }}
+            className="flex items-center  gap-3"
+          >
+            <a
+              href="#join"
+              className="button hidden bg-[#7c9b76] px-5 py-2!  text-xs text-white md:inline-flex"
+            >
+              Join Us
+            </a>
+            <button
+              aria-label={open ? "Close navigation" : "Open navigation"}
+              aria-expanded={open}
+              onClick={() => setOpen(!open)}
+              className="ml-auto grid size-10 shrink-0 place-items-center rounded-full border border-teal-900/15 text-teal-900 md:hidden"
+            >
+              <span className="grid h-3 w-4.5 shrink-0 content-between">
+                <motion.span
+                  className="hamburger-bar"
+                  animate={
+                    reduceMotion
+                      ? undefined
+                      : open
+                        ? { rotate: 45, y: 5 }
+                        : { rotate: 0, y: 0 }
+                  }
+                  transition={{ duration: 0.3, ease: easeCalm }}
+                />
+                <motion.span
+                  className="hamburger-bar"
+                  animate={reduceMotion ? undefined : { opacity: open ? 0 : 1 }}
+                  transition={{ duration: 0.2, ease: easeCalm }}
+                />
+                <motion.span
+                  className="hamburger-bar"
+                  animate={
+                    reduceMotion
+                      ? undefined
+                      : open
+                        ? { rotate: -45, y: -5 }
+                        : { rotate: 0, y: 0 }
+                  }
+                  transition={{ duration: 0.3, ease: easeCalm }}
+                />
+              </span>
+            </button>
+          </motion.div>
         </motion.div>
-      </motion.div>
+      </motion.header>
       <AnimatePresence>
         {open && (
           <>
@@ -368,9 +391,9 @@ function Nav() {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
+              transition={{ duration: 0.2, ease: easeCalm }}
               onClick={() => setOpen(false)}
-              className="fixed inset-0 z-[60] bg-teal-950/50 md:hidden"
+              className="fixed inset-0 z-[60] isolate bg-teal-950/55 md:hidden"
             />
             <motion.nav
               key="sidebar"
@@ -378,7 +401,8 @@ function Nav() {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", stiffness: 320, damping: 34 }}
-              className="fixed inset-y-0 right-0 z-[70] flex w-[82%] max-w-xs flex-col bg-white px-6 py-6 shadow-2xl md:hidden"
+              style={{ backgroundColor: "#ffffff" }}
+              className="fixed inset-y-0 right-0 z-[70] isolate flex w-[82%] max-w-xs flex-col px-6 py-6 shadow-2xl md:hidden"
             >
               <div className="flex items-center justify-between">
                 <Image
@@ -419,7 +443,7 @@ function Nav() {
           </>
         )}
       </AnimatePresence>
-    </motion.header>
+    </>
   );
 }
 
@@ -541,8 +565,8 @@ export function LandingPage() {
         </div>
       </section>
       <div className="h-0.75 bg-[repeating-linear-gradient(90deg,rgba(254,209,4,.5)_0_14px,rgba(252,14,14,.22)_14px_22px,transparent_22px_40px)]" />
-      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Join />{" "}
-      <Events /> <Partners /> <Footer />
+      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Join /> <Events />{" "}
+      <Partners /> <Footer />
     </main>
   );
 }
@@ -560,8 +584,8 @@ function Impact() {
       <Reveal className="page-width relative">
         <p className="eyebrow">Our roots</p>
         <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(2rem,3.4vw,2.8rem)] font-extrabold leading-[1.08]">
-          Rooted in culture.{" "}
-          <span className="marker">Driven by community</span>.
+          Rooted in culture. <span className="marker">Driven by community</span>
+          .
         </h2>
         <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-[#4a5164]">
           YCA was founded in May 2023 with a simple yet powerful vision: to
@@ -751,7 +775,10 @@ function Team() {
                 </h3>
                 <ul className="mt-5 grid gap-3.5">
                   {members.map(([image, name, role]) => (
-                    <li key={`${department}-${name}`} className="flex items-center gap-3">
+                    <li
+                      key={`${department}-${name}`}
+                      className="flex items-center gap-3"
+                    >
                       <Image
                         src={`/assets/${image}`}
                         alt=""
@@ -779,7 +806,8 @@ function Team() {
                 Want to join the team?
               </h3>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#5a6560]">
-                We&apos;re looking for people to help with {openRoles.join(", ")}.
+                We&apos;re looking for people to help with{" "}
+                {openRoles.join(", ")}.
               </p>
             </div>
             <a
@@ -932,7 +960,7 @@ function Join() {
       title: "Members",
       copy: "For young Cameroonians aged 18-35 and friends of Cameroon in Ottawa-Gatineau. Membership fees will launch once we're officially registered.",
       cta: "Join WhatsApp",
-      href: placeholder,
+      href: cta,
       variant: "green",
     },
     {
@@ -983,7 +1011,9 @@ function Join() {
                   }`}
                   href={href}
                   target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  rel={
+                    href.startsWith("http") ? "noopener noreferrer" : undefined
+                  }
                 >
                   {cta}
                 </a>
