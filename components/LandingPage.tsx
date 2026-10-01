@@ -11,18 +11,22 @@ import {
 import {
   ArrowLeft,
   ArrowRight,
+  ChevronDown,
   Compass,
+  Globe,
   Handshake,
   Users,
   X,
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
+import { LangProvider, useLang, type Lang } from "./i18n";
 
 const easeCalm = [0.22, 1, 0.36, 1] as const;
 
 const placeholder =
   "https://docs.google.com/forms/d/e/1FAIpQLSdeMeppoq8YyCiu3CVQVybWrkp0Wh3gK2muOfuCMbZKZO84UQ/viewform?pli=1";
 const instagram = "https://www.instagram.com/ycaottawagatineau/";
+const navHrefs = ["#who", "#programs", "#year", "#events"];
 const photos = {
   hilary: "team-hilary.png",
   anne: "team-anne.png",
@@ -40,113 +44,66 @@ const photos = {
   ivan: "team-ivan.jpg",
 } as const;
 const administration = [
-  [photos.hilary, "Hilary Dondji", "Founder", "Finance"],
-  [photos.anne, "Anne Tembou", "President"],
-  [photos.ines, "Ines Ngale", "Vice-President"],
+  [photos.hilary, "Hilary Dondji"],
+  [photos.anne, "Anne Tembou"],
+  [photos.ines, "Ines Ngale"],
 ] as const;
 const departments = [
   [
-    "Marketing",
-    "Our outreach, storytelling and social media.",
+    "marketing",
     [
-      [photos.franck, "Franck Pokam", "Marketing Lead"],
-      [photos.ines, "Ines Ngale", "Graphic Designer"],
-      [photos.erika, "Erika Yimga", "Graphic Designer"],
-      [photos.loic, "Loïc Atanga", "Content Creator"],
-      [photos.ulrich, "Ulrich Njengoue", "Content Creator"],
+      [photos.franck, "Franck Pokam", true],
+      [photos.ines, "Ines Ngale", false],
+      [photos.erika, "Erika Yimga", false],
+      [photos.loic, "Loïc Atanga", false],
+      [photos.ulrich, "Ulrich Njengoue", false],
     ],
   ],
   [
-    "Events",
-    "Planning and organising our community events.",
+    "events",
     [
-      [photos.isabelle, "Isabelle Fokom", "Events Lead"],
-      [photos.leaticia, "Leaticia Nde Mba", "Event Coordinator"],
-      [photos.edbi, "Edbi Nocha", "Event Design"],
-      [photos.loic, "Loïc Atanga", "Guest Experience"],
-      [photos.joy, "Joy Scotia", "Volunteer Coordinator"],
+      [photos.isabelle, "Isabelle Fokom", true],
+      [photos.leaticia, "Leaticia Nde Mba", false],
+      [photos.edbi, "Edbi Nocha", false],
+      [photos.loic, "Loïc Atanga", false],
+      [photos.joy, "Joy Scotia", false],
     ],
   ],
   [
-    "Sports & Leisure",
-    "Healthy lifestyles, teamwork and community pride.",
+    "sports",
     [
-      [photos.ivan, "Ivan Dzoibo", "Sports & Leisure Lead"],
-      [photos.fabiola, "Fabiola Maboga", "Hiking Coordinator"],
-      [photos.euclide, "Euclide Wamba", "Sports Coordinator"],
+      [photos.ivan, "Ivan Dzoibo", true],
+      [photos.fabiola, "Fabiola Maboga", false],
+      [photos.euclide, "Euclide Wamba", false],
     ],
   ],
   [
-    "Operations",
-    "Day-to-day operations, finance and partnerships.",
+    "operations",
     [
-      [photos.hilary, "Hilary Dondji", "Finance"],
-      [photos.anne, "Anne Tembou", "Internal Affairs"],
-      [photos.ines, "Ines Ngale", "Community Engagement"],
-      [photos.erika, "Erika Yimga", "External Affairs"],
+      [photos.hilary, "Hilary Dondji", false],
+      [photos.anne, "Anne Tembou", false],
+      [photos.ines, "Ines Ngale", false],
+      [photos.erika, "Erika Yimga", false],
     ],
   ],
 ] as const;
-const openRoles = [
-  "Marketing",
-  "Mentorship",
-  "Fundraising & Sponsorship",
-  "Events",
-  "Administration",
-];
 const programs = [
-  [
-    "audience-wide.png",
-    "Pillar",
-    "Community gatherings",
-    "Ottawa & Gatineau",
-    "Easy ways to meet people, share a meal, and feel at home.",
-  ],
-  [
-    "two-women-talking.png",
-    "Pillar",
-    "Cultural exchange",
-    "Quarterly",
-    "Celebrating Cameroonian culture with the wider community.",
-  ],
-  [
-    "two-men-smiling.png",
-    "Pillar",
-    "Professional growth",
-    "With local partners",
-    "Conversations, workshops, and connections that move us forward.",
-  ],
-  [
-    "conversation.png",
-    "Event",
-    "Social Saturdays",
-    "Monthly · Ottawa",
-    "A relaxed gathering for new faces and familiar ones.",
-  ],
-  [
-    "two-women-portrait.png",
-    "Event",
-    "Culture nights",
-    "Summer · Gatineau",
-    "Music, food, stories, and a little piece of home.",
-  ],
-  [
-    "hike-pink-lake.png",
-    "Event",
-    "Outdoor days",
-    "Seasonal · Gatineau Park",
-    "Fresh air, good company, and a shared sense of adventure.",
-  ],
+  ["audience-wide.png", "pillar"],
+  ["two-women-talking.png", "pillar"],
+  ["two-men-smiling.png", "pillar"],
+  ["conversation.png", "event"],
+  ["two-women-portrait.png", "event"],
+  ["hike-pink-lake.png", "event"],
 ] as const;
 const gallery = [
-  ["hike-pink-lake.png", "Outdoor Days - Spring 2026"],
-  ["audience-wide.png", "Community Launch - Aug 2025"],
-  ["two-women-portrait.png", "Culture Night - Nov 2025"],
-  ["team-group.png", "Cultural Festival - Sept 2025"],
-  ["speaker-mic.png", "Youth Panel - Oct 2025"],
-  ["team-group-2.png", "Chapter Team - Winter 2026"],
-  ["two-men-smiling.png", "Networking Mixer - Feb 2026"],
-  ["conversation.png", "Social Saturday - Jan 2026"],
+  "hike-pink-lake.png",
+  "audience-wide.png",
+  "two-women-portrait.png",
+  "team-group.png",
+  "speaker-mic.png",
+  "team-group-2.png",
+  "two-men-smiling.png",
+  "conversation.png",
 ] as const;
 const partners = [
   ["la-belle-etoile.png", "La Belle Étoile"],
@@ -170,33 +127,37 @@ const partners = [
   ["franck-bikele.png", "Franck BIKELE"],
   ["gofyra.png", "Gofyra"],
 ] as const;
-const values = [
-  [Compass, "Know", "Connect to who we are."],
-  [Handshake, "Respect", "Treat others with dignity."],
-  [Users, "Community", "Build together, empower together."],
+const valueIcons = [Compass, Handshake, Users];
+const stats = ["3", "14", "8", "6"];
+const joinLinks = [
+  [placeholder, "green"],
+  [instagram, "gold"],
+  ["mailto:ycaottawagatineau@gmail.com", "outline"],
 ] as const;
-const goals = [
-  [
-    "Empower youth",
-    "Autonomiser la jeunesse",
-    "Provide resources and opportunities for personal growth, leadership, and skill development.",
-  ],
-  [
-    "Promote unity",
-    "Promouvoir l’unité",
-    "Foster cultural pride and strengthen bonds within the Cameroonian community.",
-  ],
-  [
-    "Build competences",
-    "Renforcer les compétences",
-    "Encourage education, mentorship, and entrepreneurship for sustainable community growth.",
-  ],
-  [
-    "Make a meaningful impact",
-    "Avoir un impact significatif",
-    "Drive initiatives that create lasting change and improve lives both locally and globally.",
-  ],
+const eventMeta = [
+  ["2026", "sports"],
+  ["2026", "culture"],
+  ["2026", "sports"],
+  ["2026", "wellness"],
+  ["2026", "wellness"],
+  ["2026", "culture"],
+  ["2026", "sports"],
+  ["2026", "culture"],
+  ["2027", "culture"],
+  ["2027", "culture"],
 ] as const;
+type EventCategory = (typeof eventMeta)[number][1];
+
+function Title({ parts }: { parts: string[] }) {
+  const [before, marker, after] = parts;
+  return (
+    <>
+      {before}
+      <span className="marker">{marker}</span>
+      {after}
+    </>
+  );
+}
 
 function Reveal({
   children,
@@ -279,7 +240,99 @@ function CountUp({
   );
 }
 
+const languages = [
+  ["en", "English"],
+  ["fr", "Français"],
+] as const;
+
+function LanguageSwitcher({ up = false }: { up?: boolean }) {
+  const { lang, setLang, t } = useLang();
+  const [open, setOpen] = useState(false);
+  const ref = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointer = (e: PointerEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("pointerdown", onPointer);
+    document.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("pointerdown", onPointer);
+      document.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const choose = (code: Lang) => {
+    setLang(code);
+    setOpen(false);
+  };
+
+  return (
+    <div ref={ref} className="relative">
+      <button
+        type="button"
+        aria-haspopup="menu"
+        aria-expanded={open}
+        aria-label={t.nav.language}
+        onClick={() => setOpen((o) => !o)}
+        className="flex items-center gap-1.5 rounded-full px-2.5 py-1.5 text-sm text-teal-900 transition-colors hover:bg-teal-900/5"
+      >
+        <Globe size={17} strokeWidth={1.8} />
+        <span className="font-bold">{lang.toUpperCase()}</span>
+        <ChevronDown
+          size={15}
+          strokeWidth={2.2}
+          className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+        />
+      </button>
+      <motion.div
+        role="menu"
+        inert={!open}
+        initial={false}
+        animate={
+          open
+            ? { opacity: 1, y: 0, scale: 1, visibility: "visible" }
+            : {
+                opacity: 0,
+                y: up ? 6 : -6,
+                scale: 0.97,
+                transitionEnd: { visibility: "hidden" },
+              }
+        }
+        transition={{ duration: reduce ? 0 : 0.18, ease: easeCalm }}
+        style={{ visibility: "hidden" }}
+        className={`absolute z-80 w-48 rounded-2xl border border-teal-900/10 bg-white p-1.5 shadow-[0_18px_40px_-18px_rgba(15,54,43,.35)] ${up ? "bottom-full left-0 mb-2 origin-bottom-left" : "right-0 top-full mt-2 origin-top-right"}`}
+      >
+        {languages.map(([code, label]) => (
+              <button
+                key={code}
+                type="button"
+                role="menuitemradio"
+                aria-checked={lang === code}
+                lang={code}
+                onClick={() => choose(code)}
+                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-[15px] transition-colors ${lang === code ? "bg-[#f3f1e7] font-bold text-[#194d02]" : "text-teal-900 hover:bg-teal-900/5"}`}
+              >
+                {label}
+                <span
+                  className={`text-[11px] font-bold tracking-[.12em] ${lang === code ? "text-[#7c9b76]" : "text-teal-900/40"}`}
+                >
+                  {code.toUpperCase()}
+                </span>
+              </button>
+            ))}
+      </motion.div>
+    </div>
+  );
+}
+
 function Nav() {
+  const { t } = useLang();
   const [open, setOpen] = useState(false);
   const [isScrolled, setIsScrolled] = useState(false);
   const reduceMotion = useReducedMotion();
@@ -287,12 +340,7 @@ function Nav() {
     duration: reduceMotion ? 0 : 0.45,
     ease: easeCalm,
   };
-  const links = [
-    ["Our Story", "#who"],
-    ["Programs", "#programs"],
-    ["Gallery", "#year"],
-    ["Events", "#events"],
-  ];
+  const links = t.nav.links.map((label, i) => [label, navHrefs[i]] as const);
   useEffect(() => {
     const updateNav = () => {
       const sentinel = document.getElementById("scroll-sentinel");
@@ -336,7 +384,7 @@ function Nav() {
             layout={!reduceMotion}
             transition={{ layout: layoutTransition }}
             href="#top"
-            aria-label="YCA OTTAWA home"
+            aria-label={t.nav.home}
           >
             <Image
               src="/assets/yca-logo.png"
@@ -367,14 +415,17 @@ function Nav() {
             transition={{ layout: layoutTransition }}
             className="flex items-center  gap-3"
           >
+            <div className="hidden md:block">
+              <LanguageSwitcher />
+            </div>
             <a
               href="#join"
               className="button hidden bg-[#7c9b76] px-5 py-2!  text-xs text-white md:inline-flex"
             >
-              Join Us
+              {t.nav.join}
             </a>
             <button
-              aria-label={open ? "Close navigation" : "Open navigation"}
+              aria-label={open ? t.nav.close : t.nav.open}
               aria-expanded={open}
               onClick={() => setOpen(!open)}
               className="ml-auto grid size-10 shrink-0 place-items-center rounded-full border border-teal-900/15 text-teal-900 md:hidden"
@@ -442,7 +493,7 @@ function Nav() {
                   className="h-10 w-auto mix-blend-multiply"
                 />
                 <button
-                  aria-label="Close navigation"
+                  aria-label={t.nav.close}
                   onClick={() => setOpen(false)}
                   className="grid size-10 place-items-center rounded-full border border-teal-900/15 text-teal-900"
                 >
@@ -466,8 +517,11 @@ function Nav() {
                 onClick={() => setOpen(false)}
                 className="button mt-auto bg-[#7c9b76] text-white"
               >
-                Join Us
+                {t.nav.join}
               </a>
+              <div className="-ml-2.5 mt-4 border-t border-teal-900/8 pt-4">
+                <LanguageSwitcher up />
+              </div>
             </motion.nav>
           </>
         )}
@@ -477,6 +531,15 @@ function Nav() {
 }
 
 export function LandingPage() {
+  return (
+    <LangProvider>
+      <Page />
+    </LangProvider>
+  );
+}
+
+function Page() {
+  const { t } = useLang();
   const reduce = useReducedMotion();
   const heroContainer = {
     hidden: {},
@@ -507,7 +570,7 @@ export function LandingPage() {
         >
           <Image
             src="/assets/hero-steps.png"
-            alt="YCA OTTAWA members in traditional Cameroonian dress"
+            alt={t.hero.imageAlt}
             fill
             priority
             className="object-cover object-[72%_42%]"
@@ -540,50 +603,45 @@ export function LandingPage() {
               className="relative mt-6"
             >
               <h1 className="font-display text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]">
-                <span className="block text-yellow-400">Community.</span>
-                <span>Culture. Growth.</span>
+                <span className="block text-yellow-400">{t.hero.line1}</span>
+                <span>{t.hero.line2}</span>
               </h1>
               <h1
                 aria-hidden="true"
                 className="hero-shine pointer-events-none absolute inset-0 select-none font-display text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]"
               >
-                <span className="block">Community.</span>
-                <span>Culture. Growth.</span>
+                <span className="block">{t.hero.line1}</span>
+                <span>{t.hero.line2}</span>
               </h1>
             </motion.div>
             <motion.p
               variants={reduce ? undefined : heroItem}
               className="mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93"
             >
-              YCA was founded in May 2023 with a simple yet powerful visionYCA
-              is a non-profit association of young Cameroonians living in
-              Ottawa-Gatineau. We create a strong community where culture,
-              friendship, and mutual support thrive. Through events, projects,
-              and volunteer initiatives, we preserve our heritage while building
-              bridges with the wider community.
+              {t.hero.body}
             </motion.p>
             <motion.div
               variants={reduce ? undefined : heroItem}
               className="mt-9 flex flex-wrap gap-3"
             >
               <a className="button bg-yellow-400 text-[#14240b]" href="#join">
-                Join Us
+                {t.hero.ctaJoin}
               </a>
               <a className="button bg-[#194d02] text-white" href="#join">
-                Get Involved
+                {t.hero.ctaInvolved}
               </a>
               <a
                 className="button border border-white/70 text-white"
                 href="#events"
               >
-                Our Events
+                {t.hero.ctaEvents}
               </a>
             </motion.div>
             <motion.div
               variants={reduce ? undefined : heroItem}
               className="mt-8 flex flex-wrap gap-1.5"
             >
-              {["Community", "Culture", "Growth"].map((tag, i) => (
+              {t.hero.tags.map((tag, i) => (
                 <Fragment key={tag}>
                   <span className=" px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/85">
                     {tag}
@@ -604,48 +662,39 @@ export function LandingPage() {
 }
 
 function Impact() {
-  const stats = [
-    ["3", "Cities: Toronto, Ottawa-Gatineau & Montréal"],
-    ["14", "Team members in Ottawa-Gatineau"],
-    ["8", "Events planned, Sept 2026 and beyond"],
-    ["6", "Areas of impact, from culture to education"],
-  ];
+  const { t } = useLang();
   return (
     <section className="relative overflow-hidden bg-[#f3f1e7] py-20">
       <div className="absolute inset-0 opacity-[.15] bg-[radial-gradient(circle_at_14px_14px,rgba(28,73,60,.28)_2px,transparent_2.5px),repeating-linear-gradient(45deg,rgba(28,73,60,.1)_0_2px,transparent_2px_12px)] bg-size-[56px_56px,18px_18px]" />
       <Reveal className="page-width relative">
-        <p className="eyebrow">Our roots</p>
+        <p className="eyebrow">{t.impact.eyebrow}</p>
         <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(2rem,3.4vw,2.8rem)] font-extrabold leading-[1.08]">
-          Rooted in culture. <span className="marker">Driven by community</span>
-          .
+          <Title parts={t.impact.title} />
         </h2>
         <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-[#4a5164]">
-          Our roots bring us together. Our community moves us forward. YCA is a
-          space where young Cameroonians connect, celebrate our heritage,
-          support one another, and build a stronger future together.
+          {t.impact.body}
         </p>
         <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {stats.map(([number, label], i) => (
-            <Reveal key={label} delay={i * 0.06}>
+          {stats.map((number, i) => (
+            <Reveal key={i} delay={i * 0.06}>
               <div className="rounded-[10px] border border-teal-900/20 bg-teal-900 p-6">
                 <CountUp
                   value={number}
                   className={`font-display block text-5xl font-extrabold ${i % 2 ? "text-[#f7f2e9]" : "text-yellow-400"}`}
                 />
                 <div className="mt-3 text-[13px] font-semibold text-[#f7f2e9]/75">
-                  {label}
+                  {t.impact.stats[i]}
                 </div>
               </div>
             </Reveal>
           ))}
         </div>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#6a7563]">
-          Toronto was founded in May 2023, Ottawa-Gatineau in May 2025 and
-          Montréal in August 2026.
+          {t.impact.founding}
         </p>
         <a href="#programs" className="button group mt-7 bg-[#194d02] ">
           <span className=" text-white flex gap-2 font-medium">
-            See what we run{" "}
+            {t.impact.cta}{" "}
             <ArrowRight
               className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
               size={16}
@@ -657,27 +706,29 @@ function Impact() {
   );
 }
 function About() {
+  const { t } = useLang();
   const reduce = useReducedMotion();
+  const [logoBefore, logoStrong, logoAfter] = t.about.logoText;
   return (
     <section id="who" className="bg-white py-20">
       <div className="page-width">
         <Reveal>
-          <p className="eyebrow">Our identity</p>
+          <p className="eyebrow">{t.about.eyebrow}</p>
           <h2 className="font-display mt-4 text-[clamp(2rem,3.4vw,2.8rem)] font-bold">
-            Who <span className="marker">We Are</span>
+            <Title parts={t.about.title} />
           </h2>
         </Reveal>
         <RevealImage delay={0.1} className="mt-11">
           <figure className="relative overflow-hidden rounded-2xl border border-teal-900/20 shadow-[0_30px_64px_-42px_rgba(28,73,60,.75)]">
             <Image
               src="/assets/team-photo-wide.png"
-              alt="YCA OTTAWA members together"
+              alt={t.about.photoAlt}
               width={1200}
               height={560}
               className="h-[clamp(260px,34vw,420px)] w-full object-cover object-[center_34%]"
             />
             <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-teal-900/90 to-transparent px-7 pb-5 pt-12 text-base italic text-[#f7f2e9]">
-              Our community, together.
+              {t.about.caption}
             </figcaption>
           </figure>
         </RevealImage>
@@ -688,15 +739,13 @@ function About() {
                 &ldquo;
               </span>
               <p className="-mt-4 max-w-[38ch] text-[clamp(1.1rem,1.5vw,1.35rem)] italic leading-relaxed text-teal-900">
-                YCA OTTAWA is a bridge between our Cameroonian roots and our
-                life here; a gathering place where community, culture, and
-                growth come together.
+                {t.about.quote}
               </p>
               <div className="mt-7 flex items-center gap-4 rounded-2xl bg-[#f3f1e7] p-6">
                 <div className="shrink-0">
                   <Image
                     src="/assets/yca-logo.png"
-                    alt="YCA logo"
+                    alt={t.about.logoAlt}
                     width={72}
                     height={72}
                     className="h-14 w-auto mix-blend-multiply"
@@ -709,18 +758,14 @@ function About() {
                     <span className="size-2.5 rounded-sm bg-yellow-400" />
                   </div>
                   <p className="text-sm leading-relaxed text-[#4a5164]">
-                    Our logo&apos;s running figure represents{" "}
-                    <strong className="text-teal-900">youth in motion;</strong>{" "}
-                    always learning, connecting, and moving forward together,
-                    carrying the colors of home wherever we go.
+                    {logoBefore}
+                    <strong className="text-teal-900">{logoStrong}</strong>
+                    {logoAfter}
                   </p>
                 </div>
               </div>
               <p className="mt-7 text-[15px] leading-relaxed text-[#4a5164]">
-                YCA is a non-profit association of young Cameroonians living in
-                Ottawa-Gatineau. Through events, projects, and volunteer
-                initiatives, we preserve our heritage while building bridges
-                with the wider community.
+                {t.about.body}
               </p>
             </div>
             <motion.div
@@ -730,31 +775,35 @@ function About() {
               transition={{ duration: 0.7, delay: 0.1, ease: easeCalm }}
               className="rounded-2xl bg-[#12362b] p-7 sm:p-8"
             >
-              <p className="eyebrow text-yellow-400!">Our mission</p>
+              <p className="eyebrow text-yellow-400!">
+                {t.about.missionEyebrow}
+              </p>
               <p className="mt-3 text-[15px] leading-relaxed text-white/90">
-                YCA unites young Cameroonians aged 18-35 to build community,
-                celebrate culture, and empower one another in Ottawa-Gatineau.
+                {t.about.mission}
               </p>
               <h3 className="font-display mt-7 border-t border-white/10 pt-6 text-2xl font-bold text-white">
-                Core Values
+                {t.about.valuesTitle}
               </h3>
               <div className="mt-6 grid gap-5">
-                {values.map(([Icon, title, copy], i) => (
-                  <div
-                    key={title}
-                    className={`flex gap-4 pb-5 ${i < values.length - 1 ? "border-b border-white/10" : ""}`}
-                  >
-                    <div className="grid size-11 shrink-0 place-items-center rounded-lg border border-yellow-400/50 text-yellow-400">
-                      <Icon size={20} />
+                {t.about.values.map(([title, copy], i) => {
+                  const Icon = valueIcons[i];
+                  return (
+                    <div
+                      key={i}
+                      className={`flex gap-4 pb-5 ${i < t.about.values.length - 1 ? "border-b border-white/10" : ""}`}
+                    >
+                      <div className="grid size-11 shrink-0 place-items-center rounded-lg border border-yellow-400/50 text-yellow-400">
+                        <Icon size={20} />
+                      </div>
+                      <div>
+                        <p className="font-semibold text-white">{title}</p>
+                        <p className="mt-1 text-sm leading-relaxed text-yellow-400/80">
+                          {copy}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <p className="font-semibold text-white">{title}</p>
-                      <p className="mt-1 text-sm leading-relaxed text-yellow-400/80">
-                        {copy}
-                      </p>
-                    </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </motion.div>
           </div>
@@ -762,13 +811,13 @@ function About() {
         <div className="mt-24">
           <Reveal className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
             <div>
-              <p className="eyebrow">Our goals</p>
+              <p className="eyebrow">{t.about.goalsEyebrow}</p>
               <h3 className="font-display mt-4 text-[clamp(1.8rem,2.8vw,2.3rem)] font-extrabold leading-[1.1]">
-                Together, we <span className="marker">grow stronger</span>.
+                <Title parts={t.about.goalsTitle} />
               </h3>
             </div>
             <p className="font-display text-lg italic text-[#7c9b76]">
-              Ensemble, on avance&nbsp;!
+              {t.about.goalsTagline}
             </p>
           </Reveal>
           <div className="relative mt-10 sm:mt-12">
@@ -781,9 +830,9 @@ function About() {
               className="absolute inset-x-0 top-[2.1rem] hidden h-px origin-left bg-linear-to-r from-yellow-400 via-[#7c9b76] to-teal-900/30 lg:block"
             />
             <ol className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-8">
-              {goals.map(([title, french, copy], i) => (
+              {t.about.goals.map(([title, other, copy], i) => (
                 <motion.li
-                  key={title}
+                  key={i}
                   initial={reduce ? false : { opacity: 0, y: 24 }}
                   whileInView={reduce ? {} : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
@@ -804,7 +853,7 @@ function About() {
                     {title}
                   </h4>
                   <p className="mt-1 text-[11px] font-bold uppercase tracking-[.14em] text-[#7c9b76]">
-                    {french}
+                    {other}
                   </p>
                   <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
                     {copy}
@@ -819,6 +868,7 @@ function About() {
   );
 }
 function TeamCarousel() {
+  const { t } = useLang();
   const trackRef = useRef<HTMLDivElement>(null);
   const reduce = useReducedMotion();
   const [active, setActive] = useState(0);
@@ -866,33 +916,35 @@ function TeamCarousel() {
         onScroll={sync}
         role="region"
         aria-roledescription="carousel"
-        aria-label="YCA working teams"
+        aria-label={t.team.carousel}
         tabIndex={0}
         className="no-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-px-5 px-5 pb-6 pt-2 outline-none sm:scroll-px-[max(1.75rem,calc((100%-1180px)/2))] sm:px-[max(1.75rem,calc((100%-1180px)/2))]"
       >
-        {departments.map(([department, tagline, members], i) => (
-          <article
-            key={department}
-            aria-label={`${department}, ${members.length} members`}
-            className={`team-card flex w-[86%] shrink-0 snap-start flex-col rounded-3xl border bg-[#f7f2e9] p-6 sm:w-[72%] sm:p-8 lg:w-[min(620px,54%)] ${i === active ? "border-yellow-400/70 shadow-[0_22px_44px_-30px_rgba(28,73,60,.55)]" : "border-teal-900/10"}`}
-          >
-            <header className="flex items-start justify-between gap-4">
-              <div>
-                <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#7c9b76]">
-                  Team {String(i + 1).padStart(2, "0")}
-                </p>
-                <h3 className="font-display mt-2 text-[clamp(1.6rem,2.4vw,2rem)] font-extrabold leading-none text-teal-900">
-                  {department}
-                </h3>
-                <p className="mt-3 text-sm italic text-[#5a6560]">{tagline}</p>
-              </div>
-            </header>
-            <ul className="mt-7 grid gap-x-6 gap-y-4 border-t border-teal-900/10 pt-6 sm:grid-cols-2">
-              {members.map(([image, name, role]) => {
-                const lead = role.includes("Lead");
-                return (
+        {departments.map(([key, members], i) => {
+          const department = t.team.departments[key];
+          return (
+            <article
+              key={key}
+              aria-label={`${department.name}, ${t.team.members(members.length)}`}
+              className={`team-card flex w-[86%] shrink-0 snap-start flex-col rounded-3xl border bg-[#f7f2e9] p-6 sm:w-[72%] sm:p-8 lg:w-[min(620px,54%)] ${i === active ? "border-yellow-400/70 shadow-[0_22px_44px_-30px_rgba(28,73,60,.55)]" : "border-teal-900/10"}`}
+            >
+              <header className="flex items-start justify-between gap-4">
+                <div>
+                  <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#7c9b76]">
+                    {t.team.teamLabel} {String(i + 1).padStart(2, "0")}
+                  </p>
+                  <h3 className="font-display mt-2 text-[clamp(1.6rem,2.4vw,2rem)] font-extrabold leading-none text-teal-900">
+                    {department.name}
+                  </h3>
+                  <p className="mt-3 text-sm italic text-[#5a6560]">
+                    {department.tagline}
+                  </p>
+                </div>
+              </header>
+              <ul className="mt-7 grid gap-x-6 gap-y-4 border-t border-teal-900/10 pt-6 sm:grid-cols-2">
+                {members.map(([image, name, lead], m) => (
                   <li
-                    key={`${department}-${name}`}
+                    key={`${key}-${name}`}
                     className="flex items-center gap-3"
                   >
                     <Image
@@ -906,19 +958,21 @@ function TeamCarousel() {
                       <p className="truncate text-[15px] font-semibold text-teal-900">
                         {name}
                       </p>
-                      <p className="text-xs text-[#5a6560]">{role}</p>
+                      <p className="text-xs text-[#5a6560]">
+                        {department.roles[m]}
+                      </p>
                     </div>
                   </li>
-                );
-              })}
-            </ul>
-          </article>
-        ))}
+                ))}
+              </ul>
+            </article>
+          );
+        })}
       </div>
       <div className="page-width mt-2 flex items-center justify-center gap-5">
         <button
           type="button"
-          aria-label="Previous team"
+          aria-label={t.team.previous}
           onClick={() => goTo(Math.max(0, active - 1))}
           disabled={atStart}
           className="grid size-11 place-items-center rounded-full border border-teal-900/20 text-teal-900 transition-colors hover:border-teal-900 hover:bg-teal-900 hover:text-white disabled:pointer-events-none disabled:opacity-30"
@@ -926,11 +980,11 @@ function TeamCarousel() {
           <ArrowLeft size={18} />
         </button>
         <div className="flex items-center gap-2">
-          {departments.map(([department], i) => (
+          {departments.map(([key], i) => (
             <button
-              key={department}
+              key={key}
               type="button"
-              aria-label={`Show ${department} team`}
+              aria-label={t.team.show(t.team.departments[key].name)}
               aria-current={i === active}
               onClick={() => goTo(i)}
               className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-7 bg-teal-900" : "w-2 bg-teal-900/25 hover:bg-teal-900/50"}`}
@@ -939,7 +993,7 @@ function TeamCarousel() {
         </div>
         <button
           type="button"
-          aria-label="Next team"
+          aria-label={t.team.next}
           onClick={() => goTo(Math.min(last, active + 1))}
           disabled={atEnd}
           className="grid size-11 place-items-center rounded-full border border-teal-900/20 text-teal-900 transition-colors hover:border-teal-900 hover:bg-teal-900 hover:text-white disabled:pointer-events-none disabled:opacity-30"
@@ -952,21 +1006,21 @@ function TeamCarousel() {
 }
 
 function Team() {
+  const { t } = useLang();
   return (
     <section id="team" className="bg-white pb-20">
       <div className="page-width">
         <Reveal>
-          <p className="eyebrow">Meet our team</p>
+          <p className="eyebrow">{t.team.eyebrow}</p>
           <h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.65rem)] font-extrabold">
-            The people behind <span className="marker">the chapter</span>
+            <Title parts={t.team.title} />
           </h2>
           <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
-            Our administration and four working teams; Marketing, Events, Sports
-            &amp; Leisure and Operations. Team as of September 2026.
+            {t.team.intro}
           </p>
         </Reveal>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {administration.map(([image, name, role, also], i) => (
+          {administration.map(([image, name], i) => (
             <Reveal key={name} delay={i * 0.05}>
               <article>
                 <div className="photo-card aspect-[.85]">
@@ -980,17 +1034,16 @@ function Team() {
                 </div>
                 <h3 className="mt-4 font-display text-xl font-bold">{name}</h3>
                 <p className="mt-1 text-xs font-bold uppercase tracking-[.15em] text-[#7c9b76]">
-                  {role}
+                  {t.team.adminRoles[i]}
                 </p>
               </article>
             </Reveal>
           ))}
         </div>
         <Reveal className="mt-16">
-          <p className="eyebrow">The people behind YCA</p>
+          <p className="eyebrow">{t.team.peopleEyebrow}</p>
           <p className="mt-3 max-w-xl text-[16.5px] leading-relaxed text-[#5a6560]">
-            Meet the people bringing our community, culture and initiatives to
-            life.
+            {t.team.peopleIntro}
           </p>
         </Reveal>
       </div>
@@ -1000,18 +1053,17 @@ function Team() {
           <div className="mt-8 flex flex-col gap-5 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
             <div>
               <h3 className="font-display text-lg font-bold text-teal-900">
-                Want to join the team?
+                {t.team.joinTitle}
               </h3>
               <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#5a6560]">
-                We&apos;re looking for people to help with{" "}
-                {openRoles.join(", ")}.
+                {t.team.joinIntro} {t.team.openRoles.join(", ")}.
               </p>
             </div>
             <a
               href="#join"
               className="button group shrink-0 bg-[#194d02] text-white!"
             >
-              Get involved{" "}
+              {t.team.joinCta}{" "}
               <ArrowRight
                 className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
                 size={16}
@@ -1024,80 +1076,87 @@ function Team() {
   );
 }
 function Programs() {
+  const { t } = useLang();
   return (
     <section id="programs" className="bg-[#e9e1ce] py-20">
       <Reveal className="page-width">
-        <p className="eyebrow">What we run</p>
+        <p className="eyebrow">{t.programs.eyebrow}</p>
         <h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
-          Three pillars, <span className="marker">six ways in</span>.
+          <Title parts={t.programs.title} />
         </h2>
         <div className="mt-10 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-          {programs.map(([image, kind, title, meta, copy], i) => (
-            <Reveal key={title} delay={i * 0.04}>
-              <article className="photo-card h-full">
-                <div className="relative aspect-[1.7]">
-                  <Image
-                    src={`/assets/${image}`}
-                    alt=""
-                    fill
-                    className="object-cover"
-                  />
-                  <span
-                    className={`absolute left-3 top-3 rounded px-2 py-1 text-[9px] font-extrabold uppercase tracking-[.14em] ${kind === "Pillar" ? "bg-[#7c9b76] text-white" : "bg-[#e3c067] text-teal-900"}`}
-                  >
-                    {kind}
-                  </span>
-                </div>
-                <div className="p-5">
-                  <p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#8b93a7]">
-                    {meta}
-                  </p>
-                  <h3 className="font-display mt-2 text-2xl font-bold">
-                    {title}
-                  </h3>
-                  <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
-                    {copy}
-                  </p>
-                </div>
-              </article>
-            </Reveal>
-          ))}
+          {programs.map(([image, kind], i) => {
+            const [title, meta, copy] = t.programs.items[i];
+            return (
+              <Reveal key={image} delay={i * 0.04}>
+                <article className="photo-card h-full">
+                  <div className="relative aspect-[1.7]">
+                    <Image
+                      src={`/assets/${image}`}
+                      alt=""
+                      fill
+                      className="object-cover"
+                    />
+                    <span
+                      className={`absolute left-3 top-3 rounded px-2 py-1 text-[9px] font-extrabold uppercase tracking-[.14em] ${kind === "pillar" ? "bg-[#7c9b76] text-white" : "bg-[#e3c067] text-teal-900"}`}
+                    >
+                      {t.programs.kinds[kind]}
+                    </span>
+                  </div>
+                  <div className="p-5">
+                    <p className="text-[10px] font-bold uppercase tracking-[.14em] text-[#8b93a7]">
+                      {meta}
+                    </p>
+                    <h3 className="font-display mt-2 text-2xl font-bold">
+                      {title}
+                    </h3>
+                    <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
+                      {copy}
+                    </p>
+                  </div>
+                </article>
+              </Reveal>
+            );
+          })}
         </div>
       </Reveal>
     </section>
   );
 }
 function Gallery() {
+  const { t } = useLang();
   return (
     <section id="year" className="bg-white py-20">
       <div className="page-width">
         <Reveal>
-          <p className="eyebrow">A year in pictures</p>
+          <p className="eyebrow">{t.gallery.eyebrow}</p>
           <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
-            A year of color,{" "}
-            <span className="marker">culture and connection</span>.
+            <Title parts={t.gallery.title} />
           </h2>
         </Reveal>
         <div className="mt-10 grid auto-rows-36.25 grid-cols-2 gap-3 md:grid-cols-4 md:auto-rows-42.5">
-          {gallery.map(([image, alt], i) => (
-            <RevealImage
-              key={alt}
-              delay={i * 0.05}
-              className={`group relative overflow-hidden rounded-lg ${i === 0 ? "col-span-2 row-span-2" : i === 3 ? "row-span-2" : ""}`}
-            >
-              <figure className="size-full">
-                <Image
-                  src={`/assets/${image}`}
-                  alt={alt}
-                  fill
-                  className="object-cover transition duration-500 group-hover:scale-105"
-                />
-                <figcaption className="absolute inset-x-0 bottom-0 translate-y-full bg-teal-900/80 p-3 text-xs font-medium text-white transition duration-300 group-hover:translate-y-0">
-                  {alt}
-                </figcaption>
-              </figure>
-            </RevealImage>
-          ))}
+          {gallery.map((image, i) => {
+            const caption = t.gallery.captions[i];
+            return (
+              <RevealImage
+                key={image}
+                delay={i * 0.05}
+                className={`group relative overflow-hidden rounded-lg ${i === 0 ? "col-span-2 row-span-2" : i === 3 ? "row-span-2" : ""}`}
+              >
+                <figure className="size-full">
+                  <Image
+                    src={`/assets/${image}`}
+                    alt={caption}
+                    fill
+                    className="object-cover transition duration-500 group-hover:scale-105"
+                  />
+                  <figcaption className="absolute inset-x-0 bottom-0 translate-y-full bg-teal-900/80 p-3 text-xs font-medium text-white transition duration-300 group-hover:translate-y-0">
+                    {caption}
+                  </figcaption>
+                </figure>
+              </RevealImage>
+            );
+          })}
         </div>
         <div className="text-center">
           <a
@@ -1105,7 +1164,7 @@ function Gallery() {
             target="_blank"
             className="button group mt-8 border border-yellow-400 text-teal-900"
           >
-            View More Photos{" "}
+            {t.gallery.cta}{" "}
             <ArrowRight
               className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
               size={16}
@@ -1117,6 +1176,7 @@ function Gallery() {
   );
 }
 function Partners() {
+  const { t } = useLang();
   const logoSet = [...partners, ...partners];
   return (
     <section
@@ -1124,16 +1184,15 @@ function Partners() {
       className="overflow-hidden border-b border-teal-900/8 bg-white py-16"
     >
       <Reveal className="page-width">
-        <p className="eyebrow">Our partners</p>
+        <p className="eyebrow">{t.partners.eyebrow}</p>
         <h2
           id="partners-heading"
           className="font-display mt-3 text-[clamp(1.8rem,2.7vw,2.2rem)] font-extrabold"
         >
-          Trusted by our{" "}
-          <span className="marker">community &amp; partners</span>.
+          <Title parts={t.partners.title} />
         </h2>
       </Reveal>
-      <div className="partner-marquee mt-10" aria-label="Partner organizations">
+      <div className="partner-marquee mt-10" aria-label={t.partners.aria}>
         <div className="partner-track">
           {logoSet.map(([file, name], index) => (
             <span className="partner-logo" key={`${name}-${index}`}>
@@ -1152,181 +1211,83 @@ function Partners() {
   );
 }
 function Join() {
-  const involve = [
-    {
-      title: "Members",
-      copy: "For young Cameroonians aged 18-35 and friends of Cameroon in Ottawa-Gatineau. Membership fees will launch once we're officially registered.",
-      cta: "Join WhatsApp",
-      href: placeholder,
-      variant: "green",
-    },
-    {
-      title: "Newcomers",
-      copy: "Just landed in Ottawa or Gatineau? Say hello. A mentorship program to welcome and guide newcomers is on our roadmap.",
-      cta: "Message us on Instagram",
-      href: instagram,
-      variant: "gold",
-    },
-    {
-      title: "Partners & sponsors",
-      copy: "Our partners and sponsors help us create opportunities and bring our initiatives to life. Let's build something together.",
-      cta: "Email the team",
-      href: "mailto:ycaottawagatineau@gmail.com",
-      variant: "outline",
-    },
-  ] as const;
+  const { t } = useLang();
   return (
     <section id="join" className="bg-white py-20">
       <div className="page-width">
         <Reveal>
-          <p className="eyebrow">Get involved</p>
+          <p className="eyebrow">{t.join.eyebrow}</p>
           <h2 className="font-display mt-4 max-w-xl text-[clamp(2rem,3.2vw,2.5rem)] font-extrabold">
-            Join YCA <span className="marker">OTTAWA</span>.
+            <Title parts={t.join.title} />
           </h2>
           <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
-            Join the WhatsApp community, follow us on social media, or write to
-            us. We&apos;d love to have you on board.
+            {t.join.body}
           </p>
         </Reveal>
         <div className="mt-9 grid gap-5 sm:grid-cols-3">
-          {involve.map(({ title, copy, cta, href, variant }, i) => (
-            <Reveal key={title} delay={i * 0.07}>
-              <div className="rounded-2xl bg-[#f3f1e7] p-7 transition-transform duration-300 ease-out hover:-translate-y-1">
-                <h3 className="font-display text-xl font-bold text-teal-900">
-                  {title}
-                </h3>
-                <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
-                  {copy}
-                </p>
-                <a
-                  className={`button mt-6 ${
-                    variant === "green"
-                      ? "bg-[#194d02] text-white!"
-                      : variant === "gold"
-                        ? "bg-[#e3c067] text-teal-900"
-                        : "border border-teal-900 text-teal-900"
-                  }`}
-                  href={href}
-                  target={href.startsWith("http") ? "_blank" : undefined}
-                  rel={
-                    href.startsWith("http") ? "noopener noreferrer" : undefined
-                  }
-                >
-                  {cta}
-                </a>
-              </div>
-            </Reveal>
-          ))}
+          {joinLinks.map(([href, variant], i) => {
+            const [title, copy, cta] = t.join.cards[i];
+            return (
+              <Reveal key={href} delay={i * 0.07}>
+                <div className="rounded-2xl bg-[#f3f1e7] p-7 transition-transform duration-300 ease-out hover:-translate-y-1">
+                  <h3 className="font-display text-xl font-bold text-teal-900">
+                    {title}
+                  </h3>
+                  <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
+                    {copy}
+                  </p>
+                  <a
+                    className={`button mt-6 ${
+                      variant === "green"
+                        ? "bg-[#194d02] text-white!"
+                        : variant === "gold"
+                          ? "bg-[#e3c067] text-teal-900"
+                          : "border border-teal-900 text-teal-900"
+                    }`}
+                    href={href}
+                    target={href.startsWith("http") ? "_blank" : undefined}
+                    rel={
+                      href.startsWith("http") ? "noopener noreferrer" : undefined
+                    }
+                  >
+                    {cta}
+                  </a>
+                </div>
+              </Reveal>
+            );
+          })}
         </div>
       </div>
     </section>
   );
 }
 function Events() {
-  const events = [
-    {
-      month: "SEP",
-      year: "2026",
-      title: "Sport Saturday",
-      meta: "Samedi Sportif",
-      tag: "Sports & Recreation",
-    },
-    {
-      month: "OCT 02",
-      year: "2026",
-      title: "Concert: Ya Levis",
-      meta: "Ottawa",
-      tag: "Community & Culture",
-    },
-    {
-      month: "OCT",
-      year: "2026",
-      title: "Fall Activity",
-      meta: "Activité d’Automne",
-      tag: "Sports & Recreation",
-    },
-    {
-      month: "OCT",
-      year: "2026",
-      title: "Pink October",
-      meta: "Octobre Rose",
-      tag: "Support & Wellness",
-    },
-    {
-      month: "NOV",
-      year: "2026",
-      title: "Men’s Movember",
-      meta: "Movember pour les hommes",
-      tag: "Support & Wellness",
-    },
-    {
-      month: "NOV",
-      year: "2026",
-      title: "Dimanche Taro",
-      meta: "",
-      tag: "Community & Culture",
-    },
-    {
-      month: "NOV",
-      year: "2026",
-      title: "Winter Activity",
-      meta: "Activité d’Hiver",
-      tag: "Sports & Recreation",
-    },
-    {
-      month: "DEC",
-      year: "2026",
-      title: "Christmas Potluck",
-      meta: "Potluck de Noël",
-      tag: "Community & Culture",
-    },
-    {
-      month: "FEB",
-      year: "2027",
-      title: "Youth Gala",
-      meta: "Gala des Jeunes",
-      tag: "Community & Culture",
-    },
-    {
-      month: "AUG",
-      year: "2027",
-      title: "This Is Cameroon Gala",
-      meta: "Our hope: to host the national gala in Ottawa",
-      tag: "Community & Culture",
-    },
-  ] as const;
-  const categories = [
-    "Community & Culture",
-    "Sports & Recreation",
-    "Support & Wellness",
-  ];
-  const tagStyle = (tag: string) =>
-    tag === "Community & Culture"
+  const { t } = useLang();
+  const tagStyle = (tag: EventCategory) =>
+    tag === "culture"
       ? "bg-[#194d02] text-white"
-      : tag === "Sports & Recreation"
+      : tag === "sports"
         ? "bg-yellow-400 text-[#14240b]"
         : "bg-[#7c9b76] text-white";
+  const categories: EventCategory[] = ["culture", "sports", "wellness"];
   return (
     <section id="events" className="bg-white py-20">
       <div className="page-width grid gap-10 lg:grid-cols-2">
         <div className="lg:sticky lg:top-28 lg:self-start">
           <Reveal>
-            <p className="eyebrow">Up next</p>
+            <p className="eyebrow">{t.events.eyebrow}</p>
             <h2 className="font-display mt-4 max-w-[20ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold">
-              The season ahead,{" "}
-              <span className="marker">Sept&nbsp;2026 &amp; beyond</span>.
+              <Title parts={t.events.title} />
             </h2>
             <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#5a6560]">
-              Join us for a vibrant series of events designed to connect,
-              inspire, and empower our community.
+              {t.events.body}
             </p>
             <div className="mt-7 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5">
               <h3 className="font-display text-lg font-bold text-teal-900">
-                Stay in the loop
+                {t.events.loopTitle}
               </h3>
               <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
-                Dates and details are shared as they&apos;re confirmed — follow
-                @ycaottawagatineau on Instagram or join the WhatsApp community.
+                {t.events.loopBody}
               </p>
             </div>
             <div className="mt-7 flex flex-wrap gap-2">
@@ -1335,7 +1296,7 @@ function Events() {
                   key={tag}
                   className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${tagStyle(tag)}`}
                 >
-                  {tag}
+                  {t.events.categories[tag]}
                 </span>
               ))}
             </div>
@@ -1343,31 +1304,34 @@ function Events() {
         </div>
         <Reveal delay={0.1}>
           <div className="divide-y divide-teal-900/10 border-t border-teal-900/10">
-            {events.map(({ month, year, title, meta, tag }, i) => (
-              <Reveal key={title} delay={Math.min(0.1 + i * 0.05, 0.3)}>
-                <div className="flex gap-6 py-5">
-                  <p className="w-20 shrink-0 text-xs font-bold uppercase leading-relaxed tracking-widest text-[#194d02]">
-                    {month}
-                    <span className="block font-medium text-[#7c9b76]">
-                      {year}
-                    </span>
-                  </p>
-                  <div>
-                    <h3 className="font-display text-lg font-bold text-teal-900">
-                      {title}
-                    </h3>
-                    {meta && (
-                      <p className="mt-1 text-sm text-[#5a6560]">{meta}</p>
-                    )}
-                    <span
-                      className={`mt-3 inline-block rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[.12em] ${tagStyle(tag)}`}
-                    >
-                      {tag}
-                    </span>
+            {eventMeta.map(([year, tag], i) => {
+              const [month, title, meta] = t.events.items[i];
+              return (
+                <Reveal key={i} delay={Math.min(0.1 + i * 0.05, 0.3)}>
+                  <div className="flex gap-6 py-5">
+                    <p className="w-20 shrink-0 text-xs font-bold uppercase leading-relaxed tracking-widest text-[#194d02]">
+                      {month}
+                      <span className="block font-medium text-[#7c9b76]">
+                        {year}
+                      </span>
+                    </p>
+                    <div>
+                      <h3 className="font-display text-lg font-bold text-teal-900">
+                        {title}
+                      </h3>
+                      {meta && (
+                        <p className="mt-1 text-sm text-[#5a6560]">{meta}</p>
+                      )}
+                      <span
+                        className={`mt-3 inline-block rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[.12em] ${tagStyle(tag)}`}
+                      >
+                        {t.events.categories[tag]}
+                      </span>
+                    </div>
                   </div>
-                </div>
-              </Reveal>
-            ))}
+                </Reveal>
+              );
+            })}
           </div>
           <a
             className="button group mt-7 border border-teal-900 text-teal-900"
@@ -1375,7 +1339,7 @@ function Events() {
             target="_blank"
             rel="noopener noreferrer"
           >
-            Follow for updates{" "}
+            {t.events.cta}{" "}
             <ArrowRight
               className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
               size={16}
@@ -1387,34 +1351,29 @@ function Events() {
   );
 }
 function Footer() {
+  const { t } = useLang();
   return (
     <footer className="bg-[#7c9b76] py-14 pb-8 text-white">
       <div className="page-width grid gap-10 sm:grid-cols-[1.5fr_1fr_1fr]">
         <div>
           <Image
             src="/assets/yca-logo.png"
-            alt="YCA OTTAWA"
+            alt={t.footer.logoAlt}
             width={132}
             height={54}
             className="h-12 w-auto mix-blend-multiply"
           />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/85">
-            Young Cameroonians Association. Uniting, celebrating &amp;
-            empowering the Cameroonian community.
+            {t.footer.tagline}
           </p>
         </div>
         <div>
-          <p className="eyebrow text-yellow-400!">Explore</p>
+          <p className="eyebrow text-yellow-400!">{t.footer.explore}</p>
           <div className="mt-4 grid gap-2.5 text-sm text-white/90">
-            {[
-              ["Our Story", "#who"],
-              ["Programs", "#programs"],
-              ["Gallery", "#year"],
-              ["Events", "#events"],
-            ].map(([label, href]) => (
+            {t.nav.links.map((label, i) => (
               <a
-                key={href}
-                href={href}
+                key={navHrefs[i]}
+                href={navHrefs[i]}
                 className="transition-color hover:text-yellow-400! "
               >
                 {label}
@@ -1423,7 +1382,7 @@ function Footer() {
           </div>
         </div>
         <div>
-          <p className="eyebrow text-yellow-400!">Connect</p>
+          <p className="eyebrow text-yellow-400!">{t.footer.connect}</p>
           <div className="mt-4 grid gap-2.5 text-sm text-white/90">
             <a
               className="font-bold text-yellow-400"
@@ -1442,13 +1401,13 @@ function Footer() {
               TikTok: @yca.ottawagatineau
             </a>
             <p>Facebook: YCA Ottawa-Gatineau</p>
-            <p>Ottawa &amp; Gatineau, Canada</p>
+            <p>{t.footer.location}</p>
           </div>
         </div>
       </div>
       <div className="page-width mt-10 flex flex-col gap-2 border-t border-white/20 pt-5 text-xs text-white/75 sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 Young Cameroonians Association, Ottawa-Gatineau.</p>
-        <p>Built by the community, for the community.</p>
+        <p>{t.footer.copyright}</p>
+        <p>{t.footer.built}</p>
       </div>
     </footer>
   );
