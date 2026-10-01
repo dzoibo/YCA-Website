@@ -13,7 +13,8 @@ import { Fragment, useEffect, useRef, useState } from "react";
 
 const easeCalm = [0.22, 1, 0.36, 1] as const;
 
-const placeholder = "https://example.com";
+const placeholder =
+  "https://docs.google.com/forms/d/e/1FAIpQLSdeMeppoq8YyCiu3CVQVybWrkp0Wh3gK2muOfuCMbZKZO84UQ/viewform?pli=1";
 const instagram = "https://www.instagram.com/ycaottawagatineau/";
 const photos = {
   hilary: "team-hilary.png",
@@ -167,6 +168,28 @@ const values = [
   [Compass, "Know", "Connect to who we are."],
   [Handshake, "Respect", "Treat others with dignity."],
   [Users, "Community", "Build together, empower together."],
+] as const;
+const goals = [
+  [
+    "Empower youth",
+    "Autonomiser la jeunesse",
+    "Provide resources and opportunities for personal growth, leadership, and skill development.",
+  ],
+  [
+    "Promote unity",
+    "Promouvoir l’unité",
+    "Foster cultural pride and strengthen bonds within the Cameroonian community.",
+  ],
+  [
+    "Build competences",
+    "Renforcer les compétences",
+    "Encourage education, mentorship, and entrepreneurship for sustainable community growth.",
+  ],
+  [
+    "Make a meaningful impact",
+    "Avoir un impact significatif",
+    "Drive initiatives that create lasting change and improve lives both locally and globally.",
+  ],
 ] as const;
 
 function Reveal({
@@ -526,9 +549,12 @@ export function LandingPage() {
               variants={reduce ? undefined : heroItem}
               className="mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93"
             >
-              The Young Cameroonians Association is a non-profit association of
-              young Cameroonians living in Ottawa-Gatineau. We create a strong
-              community where culture, friendship, and mutual support thrive.
+              YCA was founded in May 2023 with a simple yet powerful visionYCA
+              is a non-profit association of young Cameroonians living in
+              Ottawa-Gatineau. We create a strong community where culture,
+              friendship, and mutual support thrive. Through events, projects,
+              and volunteer initiatives, we preserve our heritage while building
+              bridges with the wider community.
             </motion.p>
             <motion.div
               variants={reduce ? undefined : heroItem}
@@ -588,10 +614,9 @@ function Impact() {
           .
         </h2>
         <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-[#4a5164]">
-          YCA was founded in May 2023 with a simple yet powerful vision: to
-          create a unified space where young Cameroonians and friends of
-          Cameroon in Toronto, the National Capital Region and now Montréal can
-          connect, support one another, and grow together.
+          Our roots bring us together. Our community moves us forward. YCA is a
+          space where young Cameroonians connect, celebrate our heritage,
+          support one another, and build a stronger future together.
         </p>
         <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map(([number, label], i) => (
@@ -626,6 +651,7 @@ function Impact() {
   );
 }
 function About() {
+  const reduce = useReducedMotion();
   return (
     <section id="who" className="bg-white py-20">
       <div className="page-width">
@@ -691,7 +717,13 @@ function About() {
                 with the wider community.
               </p>
             </div>
-            <div className="rounded-2xl bg-[#12362b] -rotate-2 p-7 sm:p-8">
+            <motion.div
+              initial={reduce ? false : { opacity: 0, rotate: 0 }}
+              whileInView={reduce ? {} : { opacity: 1, rotate: -2 }}
+              viewport={{ once: true, amount: 0.4 }}
+              transition={{ duration: 0.7, delay: 0.1, ease: easeCalm }}
+              className="rounded-2xl bg-[#12362b] p-7 sm:p-8"
+            >
               <p className="eyebrow text-yellow-400!">Our mission</p>
               <p className="mt-3 text-[15px] leading-relaxed text-white/90">
                 YCA unites young Cameroonians aged 18-35 to build community,
@@ -718,9 +750,60 @@ function About() {
                   </div>
                 ))}
               </div>
-            </div>
+            </motion.div>
           </div>
         </Reveal>
+        <div className="mt-24">
+          <Reveal className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
+            <div>
+              <p className="eyebrow">Our goals</p>
+              <h3 className="font-display mt-4 text-[clamp(1.8rem,2.8vw,2.3rem)] font-extrabold leading-[1.1]">
+                Together, we <span className="marker">grow stronger</span>.
+              </h3>
+            </div>
+            <p className="font-display text-lg italic text-[#7c9b76]">
+              Ensemble, on avance&nbsp;!
+            </p>
+          </Reveal>
+          <div className="relative mt-10 sm:mt-12">
+            <motion.div
+              aria-hidden="true"
+              initial={reduce ? false : { scaleX: 0 }}
+              whileInView={reduce ? {} : { scaleX: 1 }}
+              viewport={{ once: true, amount: 0.6 }}
+              transition={{ duration: 1.2, ease: easeCalm }}
+              className="absolute inset-x-0 top-[2.1rem] hidden h-px origin-left bg-linear-to-r from-yellow-400 via-[#7c9b76] to-teal-900/30 lg:block"
+            />
+            <ol className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-8">
+              {goals.map(([title, french, copy], i) => (
+                <motion.li
+                  key={title}
+                  initial={reduce ? false : { opacity: 0, y: 24 }}
+                  whileInView={reduce ? {} : { opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.3 }}
+                  transition={{ duration: 0.6, delay: 0.15 + i * 0.08, ease: easeCalm }}
+                  className="group relative"
+                >
+                    <div className="relative z-10 inline-flex items-center gap-3 bg-white pr-3">
+                      <span className="goal-number font-display text-[2.8rem] font-extrabold leading-none sm:text-[3.6rem]">
+                        {String(i + 1).padStart(2, "0")}
+                      </span>
+                      <span className="relative z-10 size-3 rotate-45 border-2 border-yellow-400 bg-white transition-colors duration-300 group-hover:bg-yellow-400" />
+                    </div>
+                    <h4 className="font-display mt-4 text-xl font-bold text-teal-900 sm:mt-6">
+                      {title}
+                    </h4>
+                    <p className="mt-1 text-[11px] font-bold uppercase tracking-[.14em] text-[#7c9b76]">
+                      {french}
+                    </p>
+                    <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
+                      {copy}
+                    </p>
+                </motion.li>
+              ))}
+            </ol>
+          </div>
+        </div>
       </div>
     </section>
   );
@@ -735,8 +818,8 @@ function Team() {
             The people behind <span className="marker">the chapter</span>
           </h2>
           <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
-            Our administration and four working teams — Marketing, Events,
-            Sports &amp; Leisure and Operations. Team as of September 2026.
+            Our administration and four working teams; Marketing, Events, Sports
+            &amp; Leisure and Operations. Team as of September 2026.
           </p>
         </Reveal>
         <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
@@ -960,7 +1043,7 @@ function Join() {
       title: "Members",
       copy: "For young Cameroonians aged 18-35 and friends of Cameroon in Ottawa-Gatineau. Membership fees will launch once we're officially registered.",
       cta: "Join WhatsApp",
-      href: cta,
+      href: placeholder,
       variant: "green",
     },
     {
