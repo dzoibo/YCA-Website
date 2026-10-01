@@ -8,7 +8,14 @@ import {
   useInView,
   useReducedMotion,
 } from "motion/react";
-import { ArrowRight, Compass, Handshake, Users, X } from "lucide-react";
+import {
+  ArrowLeft,
+  ArrowRight,
+  Compass,
+  Handshake,
+  Users,
+  X,
+} from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 
 const easeCalm = [0.22, 1, 0.36, 1] as const;
@@ -34,18 +41,13 @@ const photos = {
 } as const;
 const administration = [
   [photos.hilary, "Hilary Dondji", "Founder", "Finance"],
-  [photos.anne, "Anne Tembou", "President (proposed)", "Internal Affairs"],
-  [
-    photos.ines,
-    "Ines Ngale",
-    "Vice-President",
-    "Community Engagement · Graphic Designer",
-  ],
-  [photos.franck, "Franck Pokam", "Founding Member", "Marketing Lead"],
+  [photos.anne, "Anne Tembou", "President"],
+  [photos.ines, "Ines Ngale", "Vice-President"],
 ] as const;
 const departments = [
   [
     "Marketing",
+    "Our outreach, storytelling and social media.",
     [
       [photos.franck, "Franck Pokam", "Marketing Lead"],
       [photos.ines, "Ines Ngale", "Graphic Designer"],
@@ -56,6 +58,7 @@ const departments = [
   ],
   [
     "Events",
+    "Planning and organising our community events.",
     [
       [photos.isabelle, "Isabelle Fokom", "Events Lead"],
       [photos.leaticia, "Leaticia Nde Mba", "Event Coordinator"],
@@ -66,6 +69,7 @@ const departments = [
   ],
   [
     "Sports & Leisure",
+    "Healthy lifestyles, teamwork and community pride.",
     [
       [photos.ivan, "Ivan Dzoibo", "Sports & Leisure Lead"],
       [photos.fabiola, "Fabiola Maboga", "Hiking Coordinator"],
@@ -74,6 +78,7 @@ const departments = [
   ],
   [
     "Operations",
+    "Day-to-day operations, finance and partnerships.",
     [
       [photos.hilary, "Hilary Dondji", "Finance"],
       [photos.anne, "Anne Tembou", "Internal Affairs"],
@@ -126,7 +131,7 @@ const programs = [
     "Music, food, stories, and a little piece of home.",
   ],
   [
-    "audience-profile.png",
+    "hike-pink-lake.png",
     "Event",
     "Outdoor days",
     "Seasonal · Gatineau Park",
@@ -134,6 +139,7 @@ const programs = [
   ],
 ] as const;
 const gallery = [
+  ["hike-pink-lake.png", "Outdoor Days - Spring 2026"],
   ["audience-wide.png", "Community Launch - Aug 2025"],
   ["two-women-portrait.png", "Culture Night - Nov 2025"],
   ["team-group.png", "Cultural Festival - Sept 2025"],
@@ -781,24 +787,28 @@ function About() {
                   initial={reduce ? false : { opacity: 0, y: 24 }}
                   whileInView={reduce ? {} : { opacity: 1, y: 0 }}
                   viewport={{ once: true, amount: 0.3 }}
-                  transition={{ duration: 0.6, delay: 0.15 + i * 0.08, ease: easeCalm }}
+                  transition={{
+                    duration: 0.6,
+                    delay: 0.15 + i * 0.08,
+                    ease: easeCalm,
+                  }}
                   className="group relative"
                 >
-                    <div className="relative z-10 inline-flex items-center gap-3 bg-white pr-3">
-                      <span className="goal-number font-display text-[2.8rem] font-extrabold leading-none sm:text-[3.6rem]">
-                        {String(i + 1).padStart(2, "0")}
-                      </span>
-                      <span className="relative z-10 size-3 rotate-45 border-2 border-yellow-400 bg-white transition-colors duration-300 group-hover:bg-yellow-400" />
-                    </div>
-                    <h4 className="font-display mt-4 text-xl font-bold text-teal-900 sm:mt-6">
-                      {title}
-                    </h4>
-                    <p className="mt-1 text-[11px] font-bold uppercase tracking-[.14em] text-[#7c9b76]">
-                      {french}
-                    </p>
-                    <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
-                      {copy}
-                    </p>
+                  <div className="relative z-10 inline-flex items-center gap-3 bg-white pr-3">
+                    <span className="goal-number font-display text-[2.8rem] font-extrabold leading-none sm:text-[3.6rem]">
+                      {String(i + 1).padStart(2, "0")}
+                    </span>
+                    <span className="relative z-10 size-3 rotate-45 border-2 border-yellow-400 bg-white transition-colors duration-300 group-hover:bg-yellow-400" />
+                  </div>
+                  <h4 className="font-display mt-4 text-xl font-bold text-teal-900 sm:mt-6">
+                    {title}
+                  </h4>
+                  <p className="mt-1 text-[11px] font-bold uppercase tracking-[.14em] text-[#7c9b76]">
+                    {french}
+                  </p>
+                  <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
+                    {copy}
+                  </p>
                 </motion.li>
               ))}
             </ol>
@@ -808,6 +818,139 @@ function About() {
     </section>
   );
 }
+function TeamCarousel() {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const [atStart, setAtStart] = useState(true);
+  const [atEnd, setAtEnd] = useState(false);
+  const last = departments.length - 1;
+
+  const step = () => {
+    const track = trackRef.current;
+    const card = track?.firstElementChild as HTMLElement | null;
+    if (!track || !card) return 0;
+    return (
+      card.offsetWidth + parseFloat(getComputedStyle(track).columnGap || "0")
+    );
+  };
+
+  const sync = () => {
+    const track = trackRef.current;
+    if (!track) return;
+    const max = track.scrollWidth - track.clientWidth;
+    const end = track.scrollLeft >= max - 4;
+    setAtStart(track.scrollLeft <= 4);
+    setAtEnd(end);
+    setActive(
+      end ? last : Math.min(last, Math.round(track.scrollLeft / (step() || 1))),
+    );
+  };
+
+  useEffect(() => {
+    sync();
+    window.addEventListener("resize", sync);
+    return () => window.removeEventListener("resize", sync);
+  }, []);
+
+  const goTo = (index: number) =>
+    trackRef.current?.scrollTo({
+      left: index * step(),
+      behavior: reduce ? "auto" : "smooth",
+    });
+
+  return (
+    <Reveal className="mt-8">
+      <div
+        ref={trackRef}
+        onScroll={sync}
+        role="region"
+        aria-roledescription="carousel"
+        aria-label="YCA working teams"
+        tabIndex={0}
+        className="no-scrollbar flex snap-x snap-mandatory gap-5 overflow-x-auto scroll-px-5 px-5 pb-6 pt-2 outline-none sm:scroll-px-[max(1.75rem,calc((100%-1180px)/2))] sm:px-[max(1.75rem,calc((100%-1180px)/2))]"
+      >
+        {departments.map(([department, tagline, members], i) => (
+          <article
+            key={department}
+            aria-label={`${department}, ${members.length} members`}
+            className={`team-card flex w-[86%] shrink-0 snap-start flex-col rounded-3xl border bg-[#f7f2e9] p-6 sm:w-[72%] sm:p-8 lg:w-[min(620px,54%)] ${i === active ? "border-yellow-400/70 shadow-[0_22px_44px_-30px_rgba(28,73,60,.55)]" : "border-teal-900/10"}`}
+          >
+            <header className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#7c9b76]">
+                  Team {String(i + 1).padStart(2, "0")}
+                </p>
+                <h3 className="font-display mt-2 text-[clamp(1.6rem,2.4vw,2rem)] font-extrabold leading-none text-teal-900">
+                  {department}
+                </h3>
+                <p className="mt-3 text-sm italic text-[#5a6560]">{tagline}</p>
+              </div>
+            </header>
+            <ul className="mt-7 grid gap-x-6 gap-y-4 border-t border-teal-900/10 pt-6 sm:grid-cols-2">
+              {members.map(([image, name, role]) => {
+                const lead = role.includes("Lead");
+                return (
+                  <li
+                    key={`${department}-${name}`}
+                    className="flex items-center gap-3"
+                  >
+                    <Image
+                      src={`/assets/${image}`}
+                      alt=""
+                      width={96}
+                      height={96}
+                      className={`size-12 shrink-0 rounded-full object-cover object-top ${lead ? "ring-2 ring-yellow-400 ring-offset-2 ring-offset-[#f7f2e9]" : "border border-teal-900/15"}`}
+                    />
+                    <div className="min-w-0">
+                      <p className="truncate text-[15px] font-semibold text-teal-900">
+                        {name}
+                      </p>
+                      <p className="text-xs text-[#5a6560]">{role}</p>
+                    </div>
+                  </li>
+                );
+              })}
+            </ul>
+          </article>
+        ))}
+      </div>
+      <div className="page-width mt-2 flex items-center justify-center gap-5">
+        <button
+          type="button"
+          aria-label="Previous team"
+          onClick={() => goTo(Math.max(0, active - 1))}
+          disabled={atStart}
+          className="grid size-11 place-items-center rounded-full border border-teal-900/20 text-teal-900 transition-colors hover:border-teal-900 hover:bg-teal-900 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+        >
+          <ArrowLeft size={18} />
+        </button>
+        <div className="flex items-center gap-2">
+          {departments.map(([department], i) => (
+            <button
+              key={department}
+              type="button"
+              aria-label={`Show ${department} team`}
+              aria-current={i === active}
+              onClick={() => goTo(i)}
+              className={`h-2 rounded-full transition-all duration-300 ${i === active ? "w-7 bg-teal-900" : "w-2 bg-teal-900/25 hover:bg-teal-900/50"}`}
+            />
+          ))}
+        </div>
+        <button
+          type="button"
+          aria-label="Next team"
+          onClick={() => goTo(Math.min(last, active + 1))}
+          disabled={atEnd}
+          className="grid size-11 place-items-center rounded-full border border-teal-900/20 text-teal-900 transition-colors hover:border-teal-900 hover:bg-teal-900 hover:text-white disabled:pointer-events-none disabled:opacity-30"
+        >
+          <ArrowRight size={18} />
+        </button>
+      </div>
+    </Reveal>
+  );
+}
+
 function Team() {
   return (
     <section id="team" className="bg-white pb-20">
@@ -839,49 +982,20 @@ function Team() {
                 <p className="mt-1 text-xs font-bold uppercase tracking-[.15em] text-[#7c9b76]">
                   {role}
                 </p>
-                <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
-                  Also: {also}
-                </p>
               </article>
             </Reveal>
           ))}
         </div>
-        <Reveal>
-          <p className="eyebrow mt-14">Our working teams</p>
+        <Reveal className="mt-16">
+          <p className="eyebrow">The people behind YCA</p>
+          <p className="mt-3 max-w-xl text-[16.5px] leading-relaxed text-[#5a6560]">
+            Meet the people bringing our community, culture and initiatives to
+            life.
+          </p>
         </Reveal>
-        <div className="mt-5 grid gap-5 md:grid-cols-2">
-          {departments.map(([department, members], i) => (
-            <Reveal key={department} delay={(i % 2) * 0.06}>
-              <div className="h-full rounded-2xl bg-[#f3f1e7] p-6 transition-transform duration-300 ease-out hover:-translate-y-1 sm:p-7">
-                <h3 className="font-display text-xl font-bold text-teal-900">
-                  {department}
-                </h3>
-                <ul className="mt-5 grid gap-3.5">
-                  {members.map(([image, name, role]) => (
-                    <li
-                      key={`${department}-${name}`}
-                      className="flex items-center gap-3"
-                    >
-                      <Image
-                        src={`/assets/${image}`}
-                        alt=""
-                        width={88}
-                        height={88}
-                        className="size-11 shrink-0 rounded-full border border-teal-900/15 object-cover object-top"
-                      />
-                      <div>
-                        <p className="text-sm font-semibold text-teal-900">
-                          {name}
-                        </p>
-                        <p className="text-xs text-[#5a6560]">{role}</p>
-                      </div>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            </Reveal>
-          ))}
-        </div>
+      </div>
+      <TeamCarousel />
+      <div className="page-width">
         <Reveal>
           <div className="mt-8 flex flex-col gap-5 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
             <div>
