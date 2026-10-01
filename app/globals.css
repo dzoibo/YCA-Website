@@ -21,7 +21,7 @@ a { color: inherit; }
 .partner-marquee { width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
 .partner-track { display: flex; width: max-content; align-items: center; animation: partner-scroll 38s linear infinite; }
 .partner-marquee:hover .partner-track { animation-play-state: paused; }
-.partner-logo { display: inline-flex; align-items: center; justify-content: center; min-width: 190px; padding: 0 2.2rem; color: #718179; font-size: .69rem; font-weight: 800; letter-spacing: .13em; text-transform: uppercase; white-space: nowrap; }
+.partner-logo { display: inline-flex; align-items: center; justify-content: center; height: 56px; padding: 0 2rem; }
 @keyframes partner-scroll { to { transform: translateX(-50%); } }
 .nav-header { position: fixed; inset-inline: 0; top: 0; z-index: 50; padding: 0; }
 .nav-header.is-scrolled { padding: 16px 22px; }

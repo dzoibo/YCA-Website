@@ -10,10 +10,9 @@ import {
 } from "motion/react";
 import {
   ArrowRight,
-  GraduationCap,
+  Compass,
   Handshake,
   Menu,
-  Sparkles,
   Users,
   X,
 } from "lucide-react";
@@ -22,38 +21,80 @@ import { Fragment, useEffect, useRef, useState } from "react";
 const easeCalm = [0.22, 1, 0.36, 1] as const;
 
 const placeholder = "https://example.com";
-const team = [
+const instagram = "https://www.instagram.com/ycaottawagatineau/";
+const photos = {
+  hilary: "team-hilary.png",
+  anne: "team-anne.png",
+  ines: "team-ines-portrait.png",
+  franck: "team-franck.png",
+  erika: "team-erika.jpg",
+  loic: "team-loic.jpg",
+  ulrich: "team-ulrich.jpg",
+  isabelle: "team-isabelle.jpg",
+  leaticia: "team-leaticia.jpg",
+  edbi: "team-edbi.jpg",
+  joy: "team-joy.jpg",
+  fabiola: "team-fabiola.jpg",
+  euclide: "team-euclide.jpg",
+  ivan: "team-ivan.jpg",
+} as const;
+const administration = [
+  [photos.hilary, "Hilary Dondji", "Founder", "Finance"],
+  [photos.anne, "Anne Tembou", "President (proposed)", "Internal Affairs"],
   [
-    "team-hilary.png",
-    "Hilary Dondji",
-    "President",
-    "Leading the chapter with care, vision, and community at heart.",
-  ],
-  [
-    "team-ines-portrait.png",
+    photos.ines,
     "Ines Ngale",
-    "Vice President",
-    "Building meaningful connections across Ottawa-Gatineau.",
+    "Vice-President",
+    "Community Engagement · Graphic Designer",
+  ],
+  [photos.franck, "Franck Pokam", "Founding Member", "Marketing Lead"],
+] as const;
+const departments = [
+  [
+    "Marketing",
+    [
+      [photos.franck, "Franck Pokam", "Marketing Lead"],
+      [photos.ines, "Ines Ngale", "Graphic Designer"],
+      [photos.erika, "Erika Yimga", "Graphic Designer"],
+      [photos.loic, "Loïc Atanga", "Content Creator"],
+      [photos.ulrich, "Ulrich Njengoue", "Content Creator"],
+    ],
   ],
   [
-    "team-anne.png",
-    "Anne Tembou",
-    "Secretary",
-    "Keeping the chapter organized and moving together.",
+    "Events",
+    [
+      [photos.isabelle, "Isabelle Fokom", "Events Lead"],
+      [photos.leaticia, "Leaticia Nde Mba", "Event Coordinator"],
+      [photos.edbi, "Edbi Nocha", "Event Design"],
+      [photos.loic, "Loïc Atanga", "Guest Experience"],
+      [photos.joy, "Joy Scotia", "Volunteer Coordinator"],
+    ],
   ],
   [
-    "team-franck.png",
-    "Franck Pokam",
-    "Communications",
-    "Telling our story and keeping the community informed.",
+    "Sports & Leisure",
+    [
+      [photos.ivan, "Ivan Dzoibo", "Sports & Leisure Lead"],
+      [photos.fabiola, "Fabiola Maboga", "Hiking Coordinator"],
+      [photos.euclide, "Euclide Wamba", "Sports Coordinator"],
+    ],
   ],
   [
-    "team-mylena-2.png",
-    "Myléna Mfegue",
-    "Treasurer",
-    "Supporting a strong, sustainable chapter.",
+    "Operations",
+    [
+      [photos.hilary, "Hilary Dondji", "Finance"],
+      [photos.anne, "Anne Tembou", "Internal Affairs"],
+      [photos.ines, "Ines Ngale", "Community Engagement"],
+      [photos.erika, "Erika Yimga", "External Affairs"],
+    ],
   ],
 ] as const;
+const openRoles = [
+  "Marketing",
+  "Mentorship",
+  "Fundraising & Sponsorship",
+  "Events",
+  "Administration",
+];
 const programs = [
   [
     "audience-wide.png",
@@ -108,32 +149,31 @@ const gallery = [
   ["conversation.png", "Social Saturday - Jan 2026"],
 ] as const;
 const partners = [
-  "Bytown Career Co.",
-  "Kola Mentorship",
-  "Gatineau Commons",
-  "NOËL KITCHEN",
-  "Sparks St. Studio",
-  "Rideau Collective",
-  "MAPI",
-  "North Star Youth",
-];
+  ["la-belle-etoile.png", "La Belle Étoile"],
+  ["yca-toronto.png", "YCA Toronto"],
+  ["cultured-cream.png", "The Cultured Cream Company"],
+  ["yum-dairy.png", "Yum Dairy"],
+  ["ajc.png", "AJC"],
+  ["frontlines.png", "Frontlines"],
+  ["club-culture.png", "Club Culture Cité Cameroun"],
+  ["cam-student-association.png", "CAM Student Association"],
+  ["adn.png", "ADN — Africa Development Network"],
+  ["cam-sco.png", "CAM SCO"],
+  ["jeunesse-bamileke-ontario.png", "Jeunesse Bamiléké Ontario"],
+  ["cyac-calgary.png", "Cameroon Youth Association of Calgary"],
+  ["cepap.png", "CEPAP"],
+  ["face2face-impact.png", "Face2Face Impact"],
+  ["oresi-cleaning.png", "ORESI Cleaning"],
+  ["zambou-tax-service.png", "Zambou Tax Service"],
+  ["profipreneur.png", "Profipreneur Board"],
+  ["ottawa-gatineau-sports.png", "Ottawa Gatineau Sports"],
+  ["franck-bikele.png", "Franck BIKELE"],
+  ["gofyra.png", "Gofyra"],
+] as const;
 const values = [
-  [
-    Users,
-    "Community Engagement",
-    "Building real connections and networking opportunities",
-  ],
-  [
-    Sparkles,
-    "Cultural Celebration",
-    "Honoring and sharing our heritage through vibrant events",
-  ],
-  [GraduationCap, "Youth Growth", "Developing the next generation of leaders"],
-  [
-    Handshake,
-    "Local Partnership",
-    "Strengthening ties with organizations across Ottawa-Gatineau",
-  ],
+  [Compass, "Know", "Connect to who we are."],
+  [Handshake, "Respect", "Treat others with dignity."],
+  [Users, "Community", "Build together, empower together."],
 ] as const;
 
 function Reveal({
@@ -462,10 +502,9 @@ export function LandingPage() {
               variants={reduce ? undefined : heroItem}
               className="mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93"
             >
-              Young Cameroonian Association Ottawa-Gatineau connects, empowers,
-              and supports young Cameroonians in the region. Since launching in
-              August 2025, we&apos;ve hosted 10+ events, reached over 100 young
-              Cameroonians, and partnered with 10+ local organizations.
+              The Young Cameroonians Association is a non-profit association of
+              young Cameroonians living in Ottawa-Gatineau. We create a strong
+              community where culture, friendship, and mutual support thrive.
             </motion.p>
             <motion.div
               variants={reduce ? undefined : heroItem}
@@ -502,32 +541,33 @@ export function LandingPage() {
         </div>
       </section>
       <div className="h-0.75 bg-[repeating-linear-gradient(90deg,rgba(254,209,4,.5)_0_14px,rgba(252,14,14,.22)_14px_22px,transparent_22px_40px)]" />
-      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Partners />{" "}
-      <Join /> <Events /> <Footer />
+      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Join />{" "}
+      <Events /> <Partners /> <Footer />
     </main>
   );
 }
 
 function Impact() {
   const stats = [
-    ["10+", "Events hosted"],
-    ["100+", "Young Cameroonians reached"],
-    ["10+", "Local partnerships"],
-    ["2", "Events every month"],
+    ["3", "Cities: Toronto, Ottawa-Gatineau & Montréal"],
+    ["14", "Team members in Ottawa-Gatineau"],
+    ["8", "Events planned, Sept 2026 and beyond"],
+    ["6", "Areas of impact, from culture to education"],
   ];
   return (
     <section className="relative overflow-hidden bg-[#f3f1e7] py-20">
       <div className="absolute inset-0 opacity-[.15] bg-[radial-gradient(circle_at_14px_14px,rgba(28,73,60,.28)_2px,transparent_2.5px),repeating-linear-gradient(45deg,rgba(28,73,60,.1)_0_2px,transparent_2px_12px)] bg-size-[56px_56px,18px_18px]" />
       <Reveal className="page-width relative">
-        <p className="eyebrow">2025–26 Community Impact</p>
-        <h2 className="font-display mt-4 max-w-[16ch] text-[clamp(2rem,3.4vw,2.8rem)] font-extrabold leading-[1.08]">
-          A chapter that shows up,{" "}
-          <span className="marker">month after month</span>.
+        <p className="eyebrow">Our roots</p>
+        <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(2rem,3.4vw,2.8rem)] font-extrabold leading-[1.08]">
+          Rooted in culture.{" "}
+          <span className="marker">Driven by community</span>.
         </h2>
         <p className="mt-5 max-w-2xl text-[17px] leading-relaxed text-[#4a5164]">
-          Since launching in August 2025, every gathering has brought new faces
-          into the room — students, newcomers and young professionals across
-          Ottawa and Gatineau.
+          YCA was founded in May 2023 with a simple yet powerful vision: to
+          create a unified space where young Cameroonians and friends of
+          Cameroon in Toronto, the National Capital Region and now Montréal can
+          connect, support one another, and grow together.
         </p>
         <div className="mt-9 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {stats.map(([number, label], i) => (
@@ -545,8 +585,8 @@ function Impact() {
           ))}
         </div>
         <p className="mt-6 max-w-xl text-sm leading-relaxed text-[#6a7563]">
-          Counts are chapter-tracked across our monthly meetups, culture nights
-          and partner workshops in Ottawa and Gatineau.
+          Toronto was founded in May 2023, Ottawa-Gatineau in May 2025 and
+          Montréal in August 2026.
         </p>
         <a href="#programs" className="button group mt-7 bg-[#194d02] ">
           <span className=" text-white flex gap-2 font-medium">
@@ -621,12 +661,19 @@ function About() {
                 </div>
               </div>
               <p className="mt-7 text-[15px] leading-relaxed text-[#4a5164]">
-                Through community, culture, and growth, YCA OTTAWA strengthens
-                the bonds that unite young Cameroonians across the region.
+                YCA is a non-profit association of young Cameroonians living in
+                Ottawa-Gatineau. Through events, projects, and volunteer
+                initiatives, we preserve our heritage while building bridges
+                with the wider community.
               </p>
             </div>
             <div className="rounded-2xl bg-[#12362b] -rotate-2 p-7 sm:p-8">
-              <h3 className="font-display text-2xl font-bold text-white">
+              <p className="eyebrow text-yellow-400!">Our mission</p>
+              <p className="mt-3 text-[15px] leading-relaxed text-white/90">
+                YCA unites young Cameroonians aged 18-35 to build community,
+                celebrate culture, and empower one another in Ottawa-Gatineau.
+              </p>
+              <h3 className="font-display mt-7 border-t border-white/10 pt-6 text-2xl font-bold text-white">
                 Core Values
               </h3>
               <div className="mt-6 grid gap-5">
@@ -657,13 +704,19 @@ function About() {
 function Team() {
   return (
     <section id="team" className="bg-white pb-20">
-      <Reveal className="page-width">
-        <p className="eyebrow">Meet our team</p>
-        <h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.65rem)] font-extrabold">
-          The people behind <span className="marker">the chapter</span>
-        </h2>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
-          {team.map(([image, name, role, copy], i) => (
+      <div className="page-width">
+        <Reveal>
+          <p className="eyebrow">Meet our team</p>
+          <h2 className="font-display mt-4 text-[clamp(2rem,3.2vw,2.65rem)] font-extrabold">
+            The people behind <span className="marker">the chapter</span>
+          </h2>
+          <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
+            Our administration and four working teams — Marketing, Events,
+            Sports &amp; Leisure and Operations. Team as of September 2026.
+          </p>
+        </Reveal>
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+          {administration.map(([image, name, role, also], i) => (
             <Reveal key={name} delay={i * 0.05}>
               <article>
                 <div className="photo-card aspect-[.85]">
@@ -680,13 +733,68 @@ function Team() {
                   {role}
                 </p>
                 <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
-                  {copy}
+                  Also: {also}
                 </p>
               </article>
             </Reveal>
           ))}
         </div>
-      </Reveal>
+        <Reveal>
+          <p className="eyebrow mt-14">Our working teams</p>
+        </Reveal>
+        <div className="mt-5 grid gap-5 md:grid-cols-2">
+          {departments.map(([department, members], i) => (
+            <Reveal key={department} delay={(i % 2) * 0.06}>
+              <div className="h-full rounded-2xl bg-[#f3f1e7] p-6 transition-transform duration-300 ease-out hover:-translate-y-1 sm:p-7">
+                <h3 className="font-display text-xl font-bold text-teal-900">
+                  {department}
+                </h3>
+                <ul className="mt-5 grid gap-3.5">
+                  {members.map(([image, name, role]) => (
+                    <li key={`${department}-${name}`} className="flex items-center gap-3">
+                      <Image
+                        src={`/assets/${image}`}
+                        alt=""
+                        width={88}
+                        height={88}
+                        className="size-11 shrink-0 rounded-full border border-teal-900/15 object-cover object-top"
+                      />
+                      <div>
+                        <p className="text-sm font-semibold text-teal-900">
+                          {name}
+                        </p>
+                        <p className="text-xs text-[#5a6560]">{role}</p>
+                      </div>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal>
+          <div className="mt-8 flex flex-col gap-5 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6">
+            <div>
+              <h3 className="font-display text-lg font-bold text-teal-900">
+                Want to join the team?
+              </h3>
+              <p className="mt-2 max-w-xl text-sm leading-relaxed text-[#5a6560]">
+                We&apos;re looking for people to help with {openRoles.join(", ")}.
+              </p>
+            </div>
+            <a
+              href="#join"
+              className="button group shrink-0 bg-[#194d02] text-white!"
+            >
+              Get involved{" "}
+              <ArrowRight
+                className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
+                size={16}
+              />
+            </a>
+          </div>
+        </Reveal>
+      </div>
     </section>
   );
 }
@@ -802,9 +910,15 @@ function Partners() {
       </Reveal>
       <div className="partner-marquee mt-10" aria-label="Partner organizations">
         <div className="partner-track">
-          {logoSet.map((partner, index) => (
-            <span className="partner-logo" key={`${partner}-${index}`}>
-              {partner}
+          {logoSet.map(([file, name], index) => (
+            <span className="partner-logo" key={`${name}-${index}`}>
+              <Image
+                src={`/assets/partners/${file}`}
+                alt={name}
+                width={160}
+                height={110}
+                className="h-full w-auto object-contain"
+              />
             </span>
           ))}
         </div>
@@ -816,21 +930,21 @@ function Join() {
   const involve = [
     {
       title: "Members",
-      copy: "Free to join, ages 16-35, Cameroonian by birth, heritage or heart.",
+      copy: "For young Cameroonians aged 18-35 and friends of Cameroon in Ottawa-Gatineau. Membership fees will launch once we're officially registered.",
       cta: "Join WhatsApp",
       href: placeholder,
       variant: "green",
     },
     {
       title: "Newcomers",
-      copy: "Just landed in Ottawa or Gatineau? Tell us a bit and we'll pair you with someone.",
-      cta: "Membership form",
-      href: placeholder,
+      copy: "Just landed in Ottawa or Gatineau? Say hello. A mentorship program to welcome and guide newcomers is on our roadmap.",
+      cta: "Message us on Instagram",
+      href: instagram,
       variant: "gold",
     },
     {
-      title: "Partners",
-      copy: "Host a workshop, sponsor an event, or bring mentors to a hike.",
+      title: "Partners & sponsors",
+      copy: "Our partners and sponsors help us create opportunities and bring our initiatives to life. Let's build something together.",
       cta: "Email the team",
       href: "mailto:ycaottawagatineau@gmail.com",
       variant: "outline",
@@ -845,9 +959,8 @@ function Join() {
             Join YCA <span className="marker">OTTAWA</span>.
           </h2>
           <p className="mt-5 max-w-2xl text-[16.5px] leading-relaxed text-[#5a6560]">
-            Two ways in: drop into the WhatsApp community to see what&apos;s
-            next, or fill the short form and we&apos;ll reach out before the
-            next gathering.
+            Join the WhatsApp community, follow us on social media, or write to
+            us. We&apos;d love to have you on board.
           </p>
         </Reveal>
         <div className="mt-9 grid gap-5 sm:grid-cols-3">
@@ -869,7 +982,8 @@ function Join() {
                         : "border border-teal-900 text-teal-900"
                   }`}
                   href={href}
-                  target={href === placeholder ? "_blank" : undefined}
+                  target={href.startsWith("http") ? "_blank" : undefined}
+                  rel={href.startsWith("http") ? "noopener noreferrer" : undefined}
                 >
                   {cta}
                 </a>
@@ -884,77 +998,140 @@ function Join() {
 function Events() {
   const events = [
     {
-      date: "SEP 05",
-      title: "Back-to-school welcome",
-      meta: "Ottawa · new students & newcomers",
-      tag: "Social Saturday",
+      month: "SEP",
+      year: "2026",
+      title: "Sport Saturday",
+      meta: "Samedi Sportif",
+      tag: "Sports & Recreation",
     },
     {
-      date: "SEP 20",
-      title: "CV & interview clinic",
-      meta: "Gatineau · with a local partner",
-      tag: "Networking",
+      month: "OCT 02",
+      year: "2026",
+      title: "Concert: Ya Levis",
+      meta: "Ottawa",
+      tag: "Community & Culture",
     },
     {
-      date: "OCT 04",
-      title: "Culture night, food & makossa",
-      meta: "Ottawa · bring a dish",
-      tag: "Social Saturday",
+      month: "OCT",
+      year: "2026",
+      title: "Fall Activity",
+      meta: "Activité d’Automne",
+      tag: "Sports & Recreation",
+    },
+    {
+      month: "OCT",
+      year: "2026",
+      title: "Pink October",
+      meta: "Octobre Rose",
+      tag: "Support & Wellness",
+    },
+    {
+      month: "NOV",
+      year: "2026",
+      title: "Men’s Movember",
+      meta: "Movember pour les hommes",
+      tag: "Support & Wellness",
+    },
+    {
+      month: "NOV",
+      year: "2026",
+      title: "Dimanche Taro",
+      meta: "",
+      tag: "Community & Culture",
+    },
+    {
+      month: "NOV",
+      year: "2026",
+      title: "Winter Activity",
+      meta: "Activité d’Hiver",
+      tag: "Sports & Recreation",
+    },
+    {
+      month: "DEC",
+      year: "2026",
+      title: "Christmas Potluck",
+      meta: "Potluck de Noël",
+      tag: "Community & Culture",
+    },
+    {
+      month: "FEB",
+      year: "2027",
+      title: "Youth Gala",
+      meta: "Gala des Jeunes",
+      tag: "Community & Culture",
+    },
+    {
+      month: "AUG",
+      year: "2027",
+      title: "This Is Cameroon Gala",
+      meta: "Our hope: to host the national gala in Ottawa",
+      tag: "Community & Culture",
     },
   ] as const;
+  const categories = [
+    "Community & Culture",
+    "Sports & Recreation",
+    "Support & Wellness",
+  ];
   const tagStyle = (tag: string) =>
-    tag === "Social Saturday" || tag === "Hike"
+    tag === "Community & Culture"
       ? "bg-[#194d02] text-white"
-      : "bg-yellow-400 text-[#14240b]";
+      : tag === "Sports & Recreation"
+        ? "bg-yellow-400 text-[#14240b]"
+        : "bg-[#7c9b76] text-white";
   return (
     <section id="events" className="bg-white py-20">
       <div className="page-width grid gap-10 lg:grid-cols-2">
-        <Reveal>
-          <p className="eyebrow">Up next</p>
-          <h2 className="font-display mt-4 max-w-[18ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold">
-            <span className="marker">Two gatherings</span> a month, all year
-            long.
-          </h2>
-          <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#5a6560]">
-            Everything is announced in the WhatsApp community first. Newcomers
-            are always welcome to their first event without signing up for
-            anything.
-          </p>
-          <div className="mt-7 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5">
-            <h3 className="font-display text-lg font-bold text-teal-900">
-              New events added monthly
-            </h3>
-            <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
-              Socials, barbecues, hikes and networking nights — rotating between
-              Ottawa and Gatineau.
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <Reveal>
+            <p className="eyebrow">Up next</p>
+            <h2 className="font-display mt-4 max-w-[20ch] text-[clamp(1.8rem,2.8vw,2.2rem)] font-extrabold">
+              The season ahead,{" "}
+              <span className="marker">Sept&nbsp;2026 &amp; beyond</span>.
+            </h2>
+            <p className="mt-5 max-w-md text-[15px] leading-relaxed text-[#5a6560]">
+              Join us for a vibrant series of events designed to connect,
+              inspire, and empower our community.
             </p>
-          </div>
-          <div className="mt-7 flex flex-wrap gap-2">
-            {["Social Saturday", "Barbecue", "Hike", "Networking"].map(
-              (tag, i) => (
+            <div className="mt-7 rounded-r-lg border-l-4 border-yellow-400 bg-[#f7f2e9] p-5">
+              <h3 className="font-display text-lg font-bold text-teal-900">
+                Stay in the loop
+              </h3>
+              <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
+                Dates and details are shared as they&apos;re confirmed — follow
+                @ycaottawagatineau on Instagram or join the WhatsApp community.
+              </p>
+            </div>
+            <div className="mt-7 flex flex-wrap gap-2">
+              {categories.map((tag) => (
                 <span
                   key={tag}
-                  className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${i % 2 ? "bg-yellow-400 text-[#14240b]" : "bg-[#194d02] text-white"}`}
+                  className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${tagStyle(tag)}`}
                 >
                   {tag}
                 </span>
-              ),
-            )}
-          </div>
-        </Reveal>
+              ))}
+            </div>
+          </Reveal>
+        </div>
         <Reveal delay={0.1}>
           <div className="divide-y divide-teal-900/10 border-t border-teal-900/10">
-            {events.map(({ date, title, meta, tag }, i) => (
-              <Reveal key={title} delay={0.1 + i * 0.06}>
+            {events.map(({ month, year, title, meta, tag }, i) => (
+              <Reveal key={title} delay={Math.min(0.1 + i * 0.05, 0.3)}>
                 <div className="flex gap-6 py-5">
-                  <p className="w-16 shrink-0 text-xs font-bold uppercase tracking-widest text-[#194d02]">
-                    {date}
+                  <p className="w-20 shrink-0 text-xs font-bold uppercase leading-relaxed tracking-widest text-[#194d02]">
+                    {month}
+                    <span className="block font-medium text-[#7c9b76]">
+                      {year}
+                    </span>
                   </p>
                   <div>
                     <h3 className="font-display text-lg font-bold text-teal-900">
                       {title}
                     </h3>
-                    <p className="mt-1 text-sm text-[#5a6560]">{meta}</p>
+                    {meta && (
+                      <p className="mt-1 text-sm text-[#5a6560]">{meta}</p>
+                    )}
                     <span
                       className={`mt-3 inline-block rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[.12em] ${tagStyle(tag)}`}
                     >
@@ -967,10 +1144,11 @@ function Events() {
           </div>
           <a
             className="button group mt-7 border border-teal-900 text-teal-900"
-            href={placeholder}
+            href={instagram}
             target="_blank"
+            rel="noopener noreferrer"
           >
-            See all events{" "}
+            Follow for updates{" "}
             <ArrowRight
               className="ml-2 transition-transform duration-300 group-hover:translate-x-1"
               size={16}
@@ -994,7 +1172,8 @@ function Footer() {
             className="h-12 w-auto mix-blend-multiply"
           />
           <p className="mt-4 max-w-xs text-sm leading-relaxed text-white/85">
-            Young Cameroonian Association | Community. Culture. Growth.
+            Young Cameroonians Association. Uniting, celebrating &amp;
+            empowering the Cameroonian community.
           </p>
         </div>
         <div>
@@ -1025,15 +1204,23 @@ function Footer() {
             >
               ycaottawagatineau@gmail.com
             </a>
-            <a href={placeholder} target="_blank">
-              @ycaottawagatineau
+            <a href={instagram} target="_blank" rel="noopener noreferrer">
+              Instagram: @ycaottawagatineau
             </a>
+            <a
+              href="https://www.tiktok.com/@yca.ottawagatineau"
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              TikTok: @yca.ottawagatineau
+            </a>
+            <p>Facebook: YCA Ottawa-Gatineau</p>
             <p>Ottawa &amp; Gatineau, Canada</p>
           </div>
         </div>
       </div>
       <div className="page-width mt-10 flex flex-col gap-2 border-t border-white/20 pt-5 text-xs text-white/75 sm:flex-row sm:items-center sm:justify-between">
-        <p>© 2026 YCA OTTAWA. A volunteer-run chapter.</p>
+        <p>© 2026 Young Cameroonians Association, Ottawa-Gatineau.</p>
         <p>Built by the community, for the community.</p>
       </div>
     </footer>
