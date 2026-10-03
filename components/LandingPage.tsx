@@ -43,12 +43,16 @@ const photos = {
   euclide: "team-euclide.jpg",
   ivan: "team-ivan.jpg",
 } as const;
-const administration = [
-  [photos.hilary, "Hilary Dondji"],
-  [photos.anne, "Anne Tembou"],
-  [photos.ines, "Ines Ngale"],
-] as const;
 const departments = [
+  [
+    "operations",
+    [
+      [photos.hilary, "Hilary Dondji", false],
+      [photos.anne, "Anne Tembou", false],
+      [photos.ines, "Ines Ngale", false],
+      [photos.erika, "Erika Yimga", false],
+    ],
+  ],
   [
     "marketing",
     [
@@ -75,15 +79,6 @@ const departments = [
       [photos.ivan, "Ivan Dzoibo", true],
       [photos.fabiola, "Fabiola Maboga", false],
       [photos.euclide, "Euclide Wamba", false],
-    ],
-  ],
-  [
-    "operations",
-    [
-      [photos.hilary, "Hilary Dondji", false],
-      [photos.anne, "Anne Tembou", false],
-      [photos.ines, "Ines Ngale", false],
-      [photos.erika, "Erika Yimga", false],
     ],
   ],
 ] as const;
@@ -809,16 +804,11 @@ function About() {
           </div>
         </Reveal>
         <div className="mt-24">
-          <Reveal className="flex flex-col gap-3 sm:flex-row sm:items-end sm:justify-between">
-            <div>
-              <p className="eyebrow">{t.about.goalsEyebrow}</p>
-              <h3 className="font-display mt-4 text-[clamp(1.8rem,2.8vw,2.3rem)] font-extrabold leading-[1.1]">
-                <Title parts={t.about.goalsTitle} />
-              </h3>
-            </div>
-            <p className="font-display text-lg italic text-[#7c9b76]">
-              {t.about.goalsTagline}
-            </p>
+          <Reveal>
+            <p className="eyebrow">{t.about.goalsEyebrow}</p>
+            <h3 className="font-display mt-4 text-[clamp(1.8rem,2.8vw,2.3rem)] font-extrabold leading-[1.1]">
+              <Title parts={t.about.goalsTitle} />
+            </h3>
           </Reveal>
           <div className="relative mt-10 sm:mt-12">
             <motion.div
@@ -830,7 +820,7 @@ function About() {
               className="absolute inset-x-0 top-[2.1rem] hidden h-px origin-left bg-linear-to-r from-yellow-400 via-[#7c9b76] to-teal-900/30 lg:block"
             />
             <ol className="grid gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-4 lg:gap-8">
-              {t.about.goals.map(([title, other, copy], i) => (
+              {t.about.goals.map(([title, copy], i) => (
                 <motion.li
                   key={i}
                   initial={reduce ? false : { opacity: 0, y: 24 }}
@@ -852,10 +842,7 @@ function About() {
                   <h4 className="font-display mt-4 text-xl font-bold text-teal-900 sm:mt-6">
                     {title}
                   </h4>
-                  <p className="mt-1 text-[11px] font-bold uppercase tracking-[.14em] text-[#7c9b76]">
-                    {other}
-                  </p>
-                  <p className="mt-3 text-sm leading-relaxed text-[#5a6560]">
+                  <p className="mt-2 text-sm leading-relaxed text-[#5a6560]">
                     {copy}
                   </p>
                 </motion.li>
@@ -930,10 +917,7 @@ function TeamCarousel() {
             >
               <header className="flex items-start justify-between gap-4">
                 <div>
-                  <p className="text-[11px] font-bold uppercase tracking-[.18em] text-[#7c9b76]">
-                    {t.team.teamLabel} {String(i + 1).padStart(2, "0")}
-                  </p>
-                  <h3 className="font-display mt-2 text-[clamp(1.6rem,2.4vw,2rem)] font-extrabold leading-none text-teal-900">
+                  <h3 className="font-display text-[clamp(1.6rem,2.4vw,2rem)] font-extrabold leading-none text-teal-900">
                     {department.name}
                   </h3>
                   <p className="mt-3 text-sm italic text-[#5a6560]">
@@ -1019,28 +1003,7 @@ function Team() {
             {t.team.intro}
           </p>
         </Reveal>
-        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {administration.map(([image, name], i) => (
-            <Reveal key={name} delay={i * 0.05}>
-              <article>
-                <div className="photo-card aspect-[.85]">
-                  <Image
-                    src={`/assets/${image}`}
-                    alt={name}
-                    width={500}
-                    height={600}
-                    className="size-full object-cover object-top"
-                  />
-                </div>
-                <h3 className="mt-4 font-display text-xl font-bold">{name}</h3>
-                <p className="mt-1 text-xs font-bold uppercase tracking-[.15em] text-[#7c9b76]">
-                  {t.team.adminRoles[i]}
-                </p>
-              </article>
-            </Reveal>
-          ))}
-        </div>
-        <Reveal className="mt-16">
+        <Reveal className="mt-10">
           <p className="eyebrow">{t.team.peopleEyebrow}</p>
           <p className="mt-3 max-w-xl text-[16.5px] leading-relaxed text-[#5a6560]">
             {t.team.peopleIntro}
