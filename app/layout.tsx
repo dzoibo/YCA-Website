@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "YCA Ottawa | Community. Culture. Growth.",
+  title: "YCA Ottawa-Gatineau | Community. Culture. Growth.",
   description:
     "Young Cameroonians Association Ottawa-Gatineau. Uniting, celebrating & empowering the Cameroonian community.",
 };

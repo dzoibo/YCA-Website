@@ -11,6 +11,7 @@ import {
 import {
   ArrowLeft,
   ArrowRight,
+  CalendarDays,
   ChevronDown,
   Compass,
   Globe,
@@ -20,6 +21,12 @@ import {
 } from "lucide-react";
 import { Fragment, useEffect, useRef, useState } from "react";
 import { LangProvider, useLang, type Lang } from "./i18n";
+import {
+  dateParts,
+  EVENT_CATEGORIES,
+  type KnownCategory,
+  type YcaEvent,
+} from "../lib/events";
 
 const easeCalm = [0.22, 1, 0.36, 1] as const;
 
@@ -153,19 +160,6 @@ const joinLinks = [
   [instagram, "gold"],
   ["mailto:ycaottawagatineau@gmail.com", "outline"],
 ] as const;
-const eventMeta = [
-  ["2026", "sports"],
-  ["2026", "culture"],
-  ["2026", "sports"],
-  ["2026", "wellness"],
-  ["2026", "wellness"],
-  ["2026", "culture"],
-  ["2026", "sports"],
-  ["2026", "culture"],
-  ["2027", "culture"],
-  ["2027", "culture"],
-] as const;
-type EventCategory = (typeof eventMeta)[number][1];
 
 function Title({ parts }: { parts: string[] }) {
   const [before, marker, after] = parts;
@@ -549,15 +543,17 @@ function Nav() {
   );
 }
 
-export function LandingPage() {
+type LandingPageProps = { events: YcaEvent[]; eventsError: boolean };
+
+export function LandingPage(props: LandingPageProps) {
   return (
     <LangProvider>
-      <Page />
+      <Page {...props} />
     </LangProvider>
   );
 }
 
-function Page() {
+function Page({ events, eventsError }: LandingPageProps) {
   const { t } = useLang();
   const reduce = useReducedMotion();
   const heroContainer = {
@@ -674,7 +670,7 @@ function Page() {
         </div>
       </section>
       <div className="h-0.75 bg-[repeating-linear-gradient(90deg,rgba(254,209,4,.5)_0_14px,rgba(252,14,14,.22)_14px_22px,transparent_22px_40px)]" />
-      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Join /> <Events />{" "}
+      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Join /> <Events events={events} error={eventsError} />{" "}
       <Partners /> <Footer />
     </main>
   );
@@ -1263,15 +1259,90 @@ function Join() {
     </section>
   );
 }
-function Events() {
+const tagStyles: Record<KnownCategory, string> = {
+  culture: "bg-[#194d02] text-white",
+  sports: "bg-yellow-400 text-[#14240b]",
+  wellness: "bg-[#7c9b76] text-white",
+};
+const isKnownCategory = (value?: string): value is KnownCategory =>
+  EVENT_CATEGORIES.includes(value as KnownCategory);
+
+function EventRow({ event, index }: { event: YcaEvent; index: number }) {
+  const { t, lang } = useLang();
+  const { year, month, day } = dateParts(event.date);
+  const monthLabel = t.events.months[month - 1];
+  const dateLabel =
+    day === undefined
+      ? monthLabel
+      : lang === "fr"
+        ? `${day} ${monthLabel}`
+        : `${monthLabel} ${String(day).padStart(2, "0")}`;
+  const title = (lang === "fr" && event.titleFr) || event.title;
+  const description = (lang === "fr" && event.descriptionFr) || event.description;
+  const meta = [event.time, event.location].filter(Boolean).join(" · ");
+  const category = event.category;
+  return (
+    <Reveal delay={Math.min(0.1 + index * 0.05, 0.3)}>
+      <div className="flex gap-6 py-5">
+        <p className="w-20 shrink-0 text-xs font-bold uppercase leading-relaxed tracking-widest text-[#194d02]">
+          {dateLabel}
+          <span className="block font-medium text-[#7c9b76]">{year}</span>
+        </p>
+        <div className="min-w-0 flex-1">
+          <div className="flex items-start gap-4">
+            <div className="min-w-0 flex-1">
+              <h3 className="font-display text-lg font-bold text-teal-900">
+                {title}
+                {event.featured && (
+                  <span className="ml-2 inline-block translate-y-[-2px] rounded-full bg-yellow-400/25 px-2 py-0.5 align-middle text-[9px] font-extrabold uppercase tracking-[.12em] text-[#14240b]">
+                    {t.events.featured}
+                  </span>
+                )}
+              </h3>
+              {meta && <p className="mt-1 text-sm text-[#5a6560]">{meta}</p>}
+              {description && (
+                <p className="mt-1.5 line-clamp-2 text-sm leading-relaxed text-[#5a6560]">
+                  {description}
+                </p>
+              )}
+            </div>
+            {event.image && (
+              <div className="relative hidden size-16 shrink-0 overflow-hidden rounded-xl border border-teal-900/10 sm:block">
+                <Image src={event.image} alt="" fill sizes="64px" className="object-cover" />
+              </div>
+            )}
+          </div>
+          <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2">
+            {category && (
+              <span
+                className={`inline-block rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[.12em] ${isKnownCategory(category) ? tagStyles[category] : "bg-teal-900/10 text-teal-900"}`}
+              >
+                {isKnownCategory(category) ? t.events.categories[category] : category}
+              </span>
+            )}
+            {event.registrationUrl && (
+              <a
+                href={event.registrationUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="group inline-flex items-center gap-1 text-xs font-bold text-[#194d02] underline-offset-4 hover:underline"
+              >
+                {t.events.register}
+                <ArrowRight
+                  size={13}
+                  className="transition-transform duration-300 group-hover:translate-x-0.5"
+                />
+              </a>
+            )}
+          </div>
+        </div>
+      </div>
+    </Reveal>
+  );
+}
+
+function Events({ events, error }: { events: YcaEvent[]; error: boolean }) {
   const { t } = useLang();
-  const tagStyle = (tag: EventCategory) =>
-    tag === "culture"
-      ? "bg-[#194d02] text-white"
-      : tag === "sports"
-        ? "bg-yellow-400 text-[#14240b]"
-        : "bg-[#7c9b76] text-white";
-  const categories: EventCategory[] = ["culture", "sports", "wellness"];
   return (
     <section id="events" className="bg-white py-20">
       <div className="page-width grid gap-10 lg:grid-cols-2">
@@ -1293,10 +1364,10 @@ function Events() {
               </p>
             </div>
             <div className="mt-7 flex flex-wrap gap-2">
-              {categories.map((tag) => (
+              {EVENT_CATEGORIES.map((tag) => (
                 <span
                   key={tag}
-                  className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${tagStyle(tag)}`}
+                  className={`rounded-full px-2.5 py-1.5 text-[9px] font-extrabold uppercase tracking-[.14em] ${tagStyles[tag]}`}
                 >
                   {t.events.categories[tag]}
                 </span>
@@ -1305,36 +1376,26 @@ function Events() {
           </Reveal>
         </div>
         <Reveal delay={0.1}>
-          <div className="divide-y divide-teal-900/10 border-t border-teal-900/10">
-            {eventMeta.map(([year, tag], i) => {
-              const [month, title, meta] = t.events.items[i];
-              return (
-                <Reveal key={i} delay={Math.min(0.1 + i * 0.05, 0.3)}>
-                  <div className="flex gap-6 py-5">
-                    <p className="w-20 shrink-0 text-xs font-bold uppercase leading-relaxed tracking-widest text-[#194d02]">
-                      {month}
-                      <span className="block font-medium text-[#7c9b76]">
-                        {year}
-                      </span>
-                    </p>
-                    <div>
-                      <h3 className="font-display text-lg font-bold text-teal-900">
-                        {title}
-                      </h3>
-                      {meta && (
-                        <p className="mt-1 text-sm text-[#5a6560]">{meta}</p>
-                      )}
-                      <span
-                        className={`mt-3 inline-block rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[.12em] ${tagStyle(tag)}`}
-                      >
-                        {t.events.categories[tag]}
-                      </span>
-                    </div>
-                  </div>
-                </Reveal>
-              );
-            })}
-          </div>
+          {events.length > 0 ? (
+            <div className="divide-y divide-teal-900/10 border-t border-teal-900/10">
+              {events.map((event, i) => (
+                <EventRow key={event.id} event={event} index={i} />
+              ))}
+            </div>
+          ) : (
+            <div
+              role={error ? "alert" : "status"}
+              className="rounded-2xl border border-dashed border-teal-900/20 bg-[#f7f2e9] px-6 py-10 text-center"
+            >
+              <CalendarDays className="mx-auto text-[#7c9b76]" size={28} strokeWidth={1.6} />
+              <p className="font-display mt-4 text-lg font-bold text-teal-900">
+                {error ? t.events.errorTitle : t.events.emptyTitle}
+              </p>
+              <p className="mx-auto mt-2 max-w-sm text-sm leading-relaxed text-[#5a6560]">
+                {error ? t.events.errorBody : t.events.emptyBody}
+              </p>
+            </div>
+          )}
           <a
             className="button group mt-7 border border-teal-900 text-teal-900"
             href={instagram}

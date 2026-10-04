@@ -8,7 +8,7 @@ const STORAGE_KEY = "yca-lang";
 const nb = " ";
 
 const en = {
-  meta: { title: "YCA Ottawa | Community. Culture. Growth." },
+  meta: { title: "YCA Ottawa-Gatineau | Community. Culture. Growth." },
   nav: {
     links: ["Our Story", "Programs", "Gallery", "Events"],
     join: "Join Us",
@@ -249,22 +249,13 @@ const en = {
       sports: "Sports & Recreation",
       wellness: "Support & Wellness",
     },
-    items: [
-      ["SEP", "Sport Saturday", ""],
-      ["OCT 02", "Concert: Ya Levis", "Ottawa"],
-      ["OCT", "Fall Activity", ""],
-      ["OCT", "Pink October", ""],
-      ["NOV", "Men’s Movember", ""],
-      ["NOV", "Dimanche Taro", ""],
-      ["NOV", "Winter Activity", ""],
-      ["DEC", "Christmas Potluck", ""],
-      ["FEB", "Youth Gala", ""],
-      [
-        "AUG",
-        "This Is Cameroon Gala",
-        "Our hope: to host the national gala in Ottawa",
-      ],
-    ],
+    months: ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"],
+    featured: "Featured",
+    register: "Register",
+    emptyTitle: "No upcoming events at the moment",
+    emptyBody: "Stay connected — more activities are coming soon.",
+    errorTitle: "Events are taking a break",
+    errorBody: "We couldn't load our events right now. Follow us on Instagram for the latest updates.",
     cta: "Follow for updates",
   },
   footer: {
@@ -282,7 +273,7 @@ const en = {
 export type Dict = typeof en;
 
 const fr: Dict = {
-  meta: { title: "YCA Ottawa | Communauté. Culture. Croissance." },
+  meta: { title: "YCA Ottawa-Gatineau | Communauté. Culture. Croissance." },
   nav: {
     links: ["Notre histoire", "Programmes", "Galerie", "Événements"],
     join: "Nous rejoindre",
@@ -522,22 +513,13 @@ const fr: Dict = {
       sports: "Sports et loisirs",
       wellness: "Soutien et bien-être",
     },
-    items: [
-      ["SEPT", "Samedi Sportif", ""],
-      ["2 OCT", `Concert${nb}: Ya Levis`, "Ottawa"],
-      ["OCT", "Activité d’Automne", ""],
-      ["OCT", "Octobre Rose", ""],
-      ["NOV", "Movember pour les hommes", ""],
-      ["NOV", "Dimanche Taro", ""],
-      ["NOV", "Activité d’Hiver", ""],
-      ["DÉC", "Potluck de Noël", ""],
-      ["FÉVR", "Gala des Jeunes", ""],
-      [
-        "AOÛT",
-        "Gala This Is Cameroon",
-        `Notre souhait${nb}: accueillir le gala national à Ottawa`,
-      ],
-    ],
+    months: ["JANV", "FÉVR", "MARS", "AVR", "MAI", "JUIN", "JUIL", "AOÛT", "SEPT", "OCT", "NOV", "DÉC"],
+    featured: "À la une",
+    register: "S’inscrire",
+    emptyTitle: "Aucun événement à venir pour le moment",
+    emptyBody: "Restez connectés : d’autres activités arrivent bientôt.",
+    errorTitle: "Nos événements font une petite pause",
+    errorBody: "Impossible de charger nos événements pour le moment. Suivez-nous sur Instagram pour les dernières nouvelles.",
     cta: "Suivre les nouvelles",
   },
   footer: {
