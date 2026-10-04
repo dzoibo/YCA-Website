@@ -30,8 +30,7 @@ import {
 
 const easeCalm = [0.22, 1, 0.36, 1] as const;
 
-const placeholder =
-  "https://docs.google.com/forms/d/e/1FAIpQLSdeMeppoq8YyCiu3CVQVybWrkp0Wh3gK2muOfuCMbZKZO84UQ/viewform?pli=1";
+const placeholder = "https://www.instagram.com/ycaottawagatineau/";
 const instagram = "https://www.instagram.com/ycaottawagatineau/";
 const navHrefs = ["#who", "#programs", "#year", "#events"];
 const photos = {
@@ -135,8 +134,8 @@ const collage = [
   ["community-jerseys.jpg", "left-[31%] top-[5%] z-20 h-[90%] w-[37%]", -1.5],
   ["dance-outdoors.jpg", "left-[1%] top-[3%] z-10 h-[34%] w-[28%]", -4],
   ["park-gathering.jpg", "left-0 top-[46%] z-10 h-[40%] w-[29%]", 3],
-  ["hike-boardwalk.jpg", "left-[71%] top-[50%] z-30 h-[58%] w-[25%]", -3],
-  ["panel-audience.png", "left-[70%] top-0 z-10 h-[42%] w-[35%]", 3],
+  ["pink-lake-trail.jpg", "left-[71%] top-[50%] z-30 h-[58%] w-[25%]", -3],
+  ["evening-talk.jpg", "left-[70%] top-0 z-10 h-[44%] w-[33%]", 3],
 ] as const;
 
 function Spark({ className = "" }: { className?: string }) {
@@ -322,23 +321,23 @@ function LanguageSwitcher({ up = false }: { up?: boolean }) {
         className={`absolute z-80 w-48 rounded-2xl border border-teal-900/10 bg-white p-1.5 shadow-[0_18px_40px_-18px_rgba(15,54,43,.35)] ${up ? "bottom-full left-0 mb-2 origin-bottom-left" : "right-0 top-full mt-2 origin-top-right"}`}
       >
         {languages.map(([code, label]) => (
-              <button
-                key={code}
-                type="button"
-                role="menuitemradio"
-                aria-checked={lang === code}
-                lang={code}
-                onClick={() => choose(code)}
-                className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-[15px] transition-colors ${lang === code ? "bg-[#f3f1e7] font-bold text-[#194d02]" : "text-teal-900 hover:bg-teal-900/5"}`}
-              >
-                {label}
-                <span
-                  className={`text-[11px] font-bold tracking-[.12em] ${lang === code ? "text-[#7c9b76]" : "text-teal-900/40"}`}
-                >
-                  {code.toUpperCase()}
-                </span>
-              </button>
-            ))}
+          <button
+            key={code}
+            type="button"
+            role="menuitemradio"
+            aria-checked={lang === code}
+            lang={code}
+            onClick={() => choose(code)}
+            className={`flex w-full items-center justify-between rounded-xl px-3.5 py-2.5 text-left text-[15px] transition-colors ${lang === code ? "bg-[#f3f1e7] font-bold text-[#194d02]" : "text-teal-900 hover:bg-teal-900/5"}`}
+          >
+            {label}
+            <span
+              className={`text-[11px] font-bold tracking-[.12em] ${lang === code ? "text-[#7c9b76]" : "text-teal-900/40"}`}
+            >
+              {code.toUpperCase()}
+            </span>
+          </button>
+        ))}
       </motion.div>
     </div>
   );
@@ -670,8 +669,8 @@ function Page({ events, eventsError }: LandingPageProps) {
         </div>
       </section>
       <div className="h-0.75 bg-[repeating-linear-gradient(90deg,rgba(254,209,4,.5)_0_14px,rgba(252,14,14,.22)_14px_22px,transparent_22px_40px)]" />
-      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Join /> <Events events={events} error={eventsError} />{" "}
-      <Partners /> <Footer />
+      <Impact /> <About /> <Team /> <Programs /> <Gallery /> <Join />{" "}
+      <Events events={events} error={eventsError} /> <Partners /> <Footer />
     </main>
   );
 }
@@ -741,8 +740,12 @@ function About() {
             {collage.map(([src, position, rotate], i) => (
               <motion.div
                 key={src}
-                initial={reduce ? false : { opacity: 0, scale: 0.92, rotate: 0, y: 20 }}
-                whileInView={reduce ? {} : { opacity: 1, scale: 1, rotate, y: 0 }}
+                initial={
+                  reduce ? false : { opacity: 0, scale: 0.92, rotate: 0, y: 20 }
+                }
+                whileInView={
+                  reduce ? {} : { opacity: 1, scale: 1, rotate, y: 0 }
+                }
                 whileHover={reduce ? undefined : { rotate: 0, scale: 1.04 }}
                 viewport={{ once: true, amount: 0.3 }}
                 transition={{ duration: 0.7, delay: i * 0.09, ease: easeCalm }}
@@ -1226,7 +1229,7 @@ function Join() {
           {joinLinks.map(([href, variant], i) => {
             const [title, copy, cta] = t.join.cards[i];
             return (
-              <Reveal key={href} delay={i * 0.07}>
+              <Reveal key={i} delay={i * 0.07}>
                 <div className="rounded-2xl bg-[#f3f1e7] p-7 transition-transform duration-300 ease-out hover:-translate-y-1">
                   <h3 className="font-display text-xl font-bold text-teal-900">
                     {title}
@@ -1245,7 +1248,9 @@ function Join() {
                     href={href}
                     target={href.startsWith("http") ? "_blank" : undefined}
                     rel={
-                      href.startsWith("http") ? "noopener noreferrer" : undefined
+                      href.startsWith("http")
+                        ? "noopener noreferrer"
+                        : undefined
                     }
                   >
                     {cta}
@@ -1278,7 +1283,8 @@ function EventRow({ event, index }: { event: YcaEvent; index: number }) {
         ? `${day} ${monthLabel}`
         : `${monthLabel} ${String(day).padStart(2, "0")}`;
   const title = (lang === "fr" && event.titleFr) || event.title;
-  const description = (lang === "fr" && event.descriptionFr) || event.description;
+  const description =
+    (lang === "fr" && event.descriptionFr) || event.description;
   const meta = [event.time, event.location].filter(Boolean).join(" · ");
   const category = event.category;
   return (
@@ -1308,7 +1314,13 @@ function EventRow({ event, index }: { event: YcaEvent; index: number }) {
             </div>
             {event.image && (
               <div className="relative hidden size-16 shrink-0 overflow-hidden rounded-xl border border-teal-900/10 sm:block">
-                <Image src={event.image} alt="" fill sizes="64px" className="object-cover" />
+                <Image
+                  src={event.image}
+                  alt=""
+                  fill
+                  sizes="64px"
+                  className="object-cover"
+                />
               </div>
             )}
           </div>
@@ -1317,7 +1329,9 @@ function EventRow({ event, index }: { event: YcaEvent; index: number }) {
               <span
                 className={`inline-block rounded-full px-2.5 py-1 text-[9px] font-extrabold uppercase tracking-[.12em] ${isKnownCategory(category) ? tagStyles[category] : "bg-teal-900/10 text-teal-900"}`}
               >
-                {isKnownCategory(category) ? t.events.categories[category] : category}
+                {isKnownCategory(category)
+                  ? t.events.categories[category]
+                  : category}
               </span>
             )}
             {event.registrationUrl && (
@@ -1387,7 +1401,11 @@ function Events({ events, error }: { events: YcaEvent[]; error: boolean }) {
               role={error ? "alert" : "status"}
               className="rounded-2xl border border-dashed border-teal-900/20 bg-[#f7f2e9] px-6 py-10 text-center"
             >
-              <CalendarDays className="mx-auto text-[#7c9b76]" size={28} strokeWidth={1.6} />
+              <CalendarDays
+                className="mx-auto text-[#7c9b76]"
+                size={28}
+                strokeWidth={1.6}
+              />
               <p className="font-display mt-4 text-lg font-bold text-teal-900">
                 {error ? t.events.errorTitle : t.events.emptyTitle}
               </p>
