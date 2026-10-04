@@ -94,7 +94,7 @@ const gallery = [
   "hike-pink-lake.png",
   "audience-wide.png",
   "two-women-portrait.png",
-  "team-group.png",
+  "who_are_we/team-group.png",
   "speaker-mic.png",
   "team-group-2.png",
   "two-men-smiling.png",
@@ -123,6 +123,30 @@ const partners = [
   ["gofyra.png", "Gofyra"],
 ] as const;
 const valueIcons = [Compass, Handshake, Users];
+// Order matches t.about.collageAlts. The last two intentionally overflow the grid.
+const collage = [
+  ["community-jerseys.jpg", "left-[31%] top-[5%] z-20 h-[90%] w-[37%]", -1.5],
+  ["dance-outdoors.jpg", "left-[1%] top-[3%] z-10 h-[34%] w-[28%]", -4],
+  ["park-gathering.jpg", "left-0 top-[46%] z-10 h-[40%] w-[29%]", 3],
+  ["hike-boardwalk.jpg", "left-[71%] top-[50%] z-30 h-[58%] w-[25%]", -3],
+  ["panel-audience.png", "left-[70%] top-0 z-10 h-[42%] w-[35%]", 3],
+] as const;
+
+function Spark({ className = "" }: { className?: string }) {
+  return (
+    <svg
+      viewBox="0 0 40 40"
+      aria-hidden="true"
+      className={`pointer-events-none absolute size-[clamp(1.6rem,4vw,2.6rem)] ${className}`}
+    >
+      <g stroke="#fed104" strokeWidth="3.4" strokeLinecap="round" fill="none">
+        <path d="M5 24 15 25" />
+        <path d="M9 9 17 17" />
+        <path d="M23 3 24 13" />
+      </g>
+    </svg>
+  );
+}
 const stats = ["3", "14", "8", "6"];
 const joinLinks = [
   [placeholder, "green"],
@@ -705,28 +729,43 @@ function About() {
   const reduce = useReducedMotion();
   const [logoBefore, logoStrong, logoAfter] = t.about.logoText;
   return (
-    <section id="who" className="bg-white py-20">
+    <section id="who" className="overflow-x-clip bg-white py-20">
       <div className="page-width">
-        <Reveal>
-          <p className="eyebrow">{t.about.eyebrow}</p>
-          <h2 className="font-display mt-4 text-[clamp(2rem,3.4vw,2.8rem)] font-bold">
-            <Title parts={t.about.title} />
-          </h2>
-        </Reveal>
-        <RevealImage delay={0.1} className="mt-11">
-          <figure className="relative overflow-hidden rounded-2xl border border-teal-900/20 shadow-[0_30px_64px_-42px_rgba(28,73,60,.75)]">
-            <Image
-              src="/assets/team-photo-wide.png"
-              alt={t.about.photoAlt}
-              width={1200}
-              height={560}
-              className="h-[clamp(260px,34vw,420px)] w-full object-cover object-[center_34%]"
-            />
-            <figcaption className="absolute inset-x-0 bottom-0 bg-linear-to-t from-teal-900/90 to-transparent px-7 pb-5 pt-12 text-base italic text-[#f7f2e9]">
-              {t.about.caption}
-            </figcaption>
-          </figure>
-        </RevealImage>
+        <div className="grid gap-10 lg:grid-cols-[minmax(0,0.8fr)_minmax(0,1.6fr)] lg:items-center lg:gap-14">
+          <Reveal>
+            <p className="eyebrow">{t.about.eyebrow}</p>
+            <h2 className="font-display mt-4 text-[clamp(2.2rem,4vw,3.3rem)] font-extrabold leading-[1.05]">
+              <Title parts={t.about.title} />
+            </h2>
+            <p className="mt-4 max-w-[26ch] text-[16.5px] leading-relaxed text-[#5a6560]">
+              {t.about.subtitle}
+            </p>
+          </Reveal>
+          <div className="relative mb-12 aspect-[1.15] w-full sm:aspect-[1.45]">
+            {collage.map(([src, position, rotate], i) => (
+              <motion.div
+                key={src}
+                initial={reduce ? false : { opacity: 0, scale: 0.92, rotate: 0, y: 20 }}
+                whileInView={reduce ? {} : { opacity: 1, scale: 1, rotate, y: 0 }}
+                whileHover={reduce ? undefined : { rotate: 0, scale: 1.04 }}
+                viewport={{ once: true, amount: 0.3 }}
+                transition={{ duration: 0.7, delay: i * 0.09, ease: easeCalm }}
+                style={reduce ? { rotate } : undefined}
+                className={`absolute overflow-hidden rounded-2xl border-4 border-white bg-white shadow-[0_24px_48px_-24px_rgba(15,54,43,.55)] hover:z-40 ${position}`}
+              >
+                <Image
+                  src={`/assets/who_are_we/${src}`}
+                  alt={t.about.collageAlts[i]}
+                  fill
+                  sizes="(min-width: 1024px) 300px, 45vw"
+                  className="object-cover"
+                />
+              </motion.div>
+            ))}
+            <Spark className="-left-[3%] -top-[7%] z-30" />
+            <Spark className="right-[1%] top-[40%] z-30 -scale-x-100" />
+          </div>
+        </div>
         <Reveal delay={0.16}>
           <div className="mt-12 grid gap-10 lg:grid-cols-2 lg:items-start">
             <div>

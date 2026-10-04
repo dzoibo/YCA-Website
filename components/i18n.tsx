@@ -44,8 +44,14 @@ const en = {
   about: {
     eyebrow: "Our identity",
     title: ["Who ", "We Are", ""],
-    photoAlt: "YCA OTTAWA members together",
-    caption: "Our community, together.",
+    subtitle: "Our community, our moments, our story.",
+    collageAlts: [
+      "YCA members smiling together in Cameroon jerseys",
+      "Members dancing together outdoors",
+      "A YCA gathering in the park",
+      "Members walking a forest boardwalk on a hike",
+      "Members listening during a YCA panel",
+    ],
     quote:
       "YCA OTTAWA is a bridge between our Cameroonian roots and our life here; a gathering place where community, culture, and growth come together.",
     logoAlt: "YCA logo",
@@ -312,8 +318,14 @@ const fr: Dict = {
   about: {
     eyebrow: "Notre identité",
     title: ["Qui ", "sommes-nous", `${nb}?`],
-    photoAlt: "Les membres de YCA OTTAWA réunis",
-    caption: "Notre communauté, ensemble.",
+    subtitle: "Notre communauté, nos moments, notre histoire.",
+    collageAlts: [
+      "Des membres de YCA souriants en maillots du Cameroun",
+      "Des membres qui dansent ensemble en plein air",
+      "Un rassemblement de YCA dans un parc",
+      "Des membres en randonnée sur une passerelle en forêt",
+      "Des membres à l’écoute lors d’un panel de YCA",
+    ],
     quote:
       "YCA OTTAWA est un pont entre nos racines camerounaises et notre vie ici ; un lieu de rassemblement où la communauté, la culture et la croissance se rejoignent.",
     logoAlt: "Logo YCA",
