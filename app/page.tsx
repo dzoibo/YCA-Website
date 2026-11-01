@@ -1,7 +1,7 @@
 import { connection } from "next/server";
-import { LandingPage } from "../components/LandingPage";
-import type { YcaEvent } from "../lib/events";
-import { getPublishedEvents } from "../lib/events-service";
+import { LandingPage } from "@/components/landing-page";
+import type { YcaEvent } from "@/lib/events";
+import { getPublishedEvents } from "@/lib/events-service";
 
 export default async function Page() {
   let events: YcaEvent[] = [];
