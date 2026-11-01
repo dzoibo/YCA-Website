@@ -1,66 +1,40 @@
 "use client";
 
-import { createContext, useContext, useEffect, useState } from "react";
-import { en, type Dict } from "./en";
-import { fr } from "./fr";
+import { useRouter } from "next/navigation";
+import { createContext, useContext } from "react";
+import { homePath, LANG_COOKIE, type Lang } from "./config";
+import { getDictionary, type Dict } from "./dictionaries";
 
-export type Lang = "en" | "fr";
-export type { Dict };
+export type { Dict, Lang };
 
 export const languages = [
-  ["en", "English"],
   ["fr", "Français"],
+  ["en", "English"],
 ] as const satisfies readonly (readonly [Lang, string])[];
-
-const STORAGE_KEY = "yca-lang";
-const dictionaries: Record<Lang, Dict> = { en, fr };
 
 type LangContextValue = { lang: Lang; setLang: (lang: Lang) => void; t: Dict };
 
 const LangContext = createContext<LangContextValue | null>(null);
 
-function preferredLang(): Lang {
-  try {
-    const saved = localStorage.getItem(STORAGE_KEY);
-    if (saved === "en" || saved === "fr") return saved;
-  } catch {}
-  const browser = navigator.languages?.[0] ?? navigator.language ?? "en";
-  return browser.toLowerCase().startsWith("fr") ? "fr" : "en";
-}
-
-export function LangProvider({ children }: { children: React.ReactNode }) {
-  const [lang, setLangState] = useState<Lang>("en");
-
-  useEffect(() => {
-    setLangState(preferredLang());
-  }, []);
-
-  useEffect(() => {
-    document.documentElement.lang = lang;
-    const desired = dictionaries[lang].meta.title;
-    const apply = () => {
-      if (document.title !== desired) document.title = desired;
-    };
-    apply();
-    // Next.js streams its static metadata title in after hydration and would overwrite ours.
-    const observer = new MutationObserver(apply);
-    observer.observe(document.head, {
-      subtree: true,
-      childList: true,
-      characterData: true,
-    });
-    return () => observer.disconnect();
-  }, [lang]);
+/** Provides the language of the current URL ("/" French, "/en" English) to client components. */
+export function LangProvider({
+  lang,
+  children,
+}: {
+  lang: Lang;
+  children: React.ReactNode;
+}) {
+  const router = useRouter();
 
   const setLang = (next: Lang) => {
-    setLangState(next);
-    try {
-      localStorage.setItem(STORAGE_KEY, next);
-    } catch {}
+    if (next === lang) return;
+    // Remember the choice for a year so proxy.ts doesn't send the visitor back.
+    document.cookie = `${LANG_COOKIE}=${next}; path=/; max-age=31536000; samesite=lax`;
+    router.push(homePath(next) + window.location.hash, { scroll: false });
   };
 
   return (
-    <LangContext.Provider value={{ lang, setLang, t: dictionaries[lang] }}>
+    <LangContext.Provider value={{ lang, setLang, t: getDictionary(lang) }}>
       {children}
     </LangContext.Provider>
   );

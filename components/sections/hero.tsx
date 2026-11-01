@@ -1,29 +1,22 @@
 "use client";
 
 import Image from "next/image";
-import { motion, useReducedMotion, type Variants } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { Fragment } from "react";
 import { SCROLL_SENTINEL_ID } from "@/components/layout/site-header";
 import { Button } from "@/components/ui/button";
 import { useLang } from "@/lib/i18n/context";
-import { easeCalm } from "@/lib/motion";
+import { cn } from "@/lib/utils";
 
-const container: Variants = {
-  hidden: {},
-  visible: { transition: { staggerChildren: 0.09, delayChildren: 0.05 } },
-};
-const item: Variants = {
-  hidden: { opacity: 0, y: 16 },
-  visible: { opacity: 1, y: 0, transition: { duration: 0.5, ease: easeCalm } },
-};
-
-const titleClass =
-  "font-display text-[clamp(3rem,6.1vw,5rem)] font-extrabold leading-[.98]";
+// Entrance animation in CSS (tw-animate-css), so the hero is painted from the server HTML
+// without waiting for JavaScript; each block is staggered with an animation delay.
+const enter =
+  "animate-in fade-in slide-in-from-bottom-4 fill-mode-both duration-500 ease-[cubic-bezier(.22,1,.36,1)]";
+const delay = (step: number) => ({ animationDelay: `${50 + step * 90}ms` });
 
 export function Hero() {
   const { t } = useLang();
   const reduce = useReducedMotion();
-  const variant = reduce ? undefined : item;
   return (
     <section
       id="top"
@@ -55,39 +48,40 @@ export function Hero() {
         className="pointer-events-none invisible absolute left-0 top-0 h-20 w-px"
       />
       <div className="page-width relative py-24 sm:py-28">
-        <motion.div
-          initial={reduce ? false : "hidden"}
-          animate="visible"
-          variants={reduce ? undefined : container}
-          className="max-w-162.5"
-        >
-          <motion.span
-            variants={variant}
-            className="inline-block border border-red-500/60 px-3 py-2 text-[10px] font-extrabold tracking-[.22em] text-yellow-400"
-          >
-            YCA OTTAWA
-          </motion.span>
-          <motion.div variants={variant} className="relative mt-6">
-            <h1 className={titleClass}>
-              <span className="block text-yellow-400">{t.hero.line1}</span>
-              <span>{t.hero.line2}</span>
-            </h1>
-            {/* Decorative light sweep over the title (hidden with reduced motion). */}
-            <p
-              aria-hidden="true"
-              className={`hero-shine pointer-events-none absolute inset-0 m-0 select-none ${titleClass}`}
+        <div className="max-w-162.5">
+          {/* The h1 names the organization and city, then the slogan. */}
+          <h1 className="font-display font-extrabold">
+            <span
+              className={cn(
+                "inline-block border border-red-500/60 px-3 py-2 text-[10px] tracking-[.22em] text-yellow-400",
+                enter,
+              )}
+              style={delay(0)}
             >
-              <span className="block">{t.hero.line1}</span>
-              <span>{t.hero.line2}</span>
-            </p>
-          </motion.div>
-          <motion.p
-            variants={variant}
-            className="mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93"
+              YCA OTTAWA-GATINEAU
+            </span>
+            <span
+              className={cn(
+                "hero-shine relative mt-6 block text-[clamp(3rem,6.1vw,5rem)] leading-[.98]",
+                enter,
+              )}
+              style={delay(1)}
+              data-shine={`${t.hero.line1}\n${t.hero.line2}`}
+            >
+              <span className="block text-yellow-400">{t.hero.line1}</span>
+              <span className="block">{t.hero.line2}</span>
+            </span>
+          </h1>
+          <p
+            className={cn(
+              "mt-7 max-w-162.5 text-[clamp(1rem,1.3vw,1.16rem)] leading-relaxed text-white/93",
+              enter,
+            )}
+            style={delay(2)}
           >
             {t.hero.body}
-          </motion.p>
-          <motion.div variants={variant} className="mt-9 flex flex-wrap gap-3">
+          </p>
+          <div className={cn("mt-9 flex flex-wrap gap-3", enter)} style={delay(3)}>
             <Button asChild variant="yellow" size="pill">
               <a href="#join">{t.hero.ctaJoin}</a>
             </Button>
@@ -97,8 +91,8 @@ export function Hero() {
             <Button asChild variant="outline-light" size="pill">
               <a href="#events">{t.hero.ctaEvents}</a>
             </Button>
-          </motion.div>
-          <motion.div variants={variant} className="mt-8 flex flex-wrap gap-1.5">
+          </div>
+          <div className={cn("mt-8 flex flex-wrap gap-1.5", enter)} style={delay(4)}>
             {t.hero.tags.map((tag, i) => (
               <Fragment key={tag}>
                 <span className="px-3.5 py-2 text-[10px] font-bold uppercase tracking-[.16em] text-white/85">
@@ -107,8 +101,8 @@ export function Hero() {
                 {i < t.hero.tags.length - 1 && <span>-</span>}
               </Fragment>
             ))}
-          </motion.div>
-        </motion.div>
+          </div>
+        </div>
       </div>
     </section>
   );

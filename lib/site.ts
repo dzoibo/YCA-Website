@@ -1,4 +1,11 @@
-// Contact details and navigation shared by the header, footer and call-to-action sections.
+// Site identity, contact details and navigation, shared by the UI, metadata and structured data.
+
+/** Canonical origin. The apex domain redirects here (configured in Vercel). */
+export const SITE_URL = "https://www.ycaottawagatineau.ca";
+
+export const SITE_NAME = "YCA Ottawa-Gatineau";
+export const ORG_NAME = "Young Cameroonians Association Ottawa-Gatineau";
+export const ORG_NAME_FR = "Association des jeunes Camerounais d’Ottawa-Gatineau";
 
 export const EMAIL = "ycaottawagatineau@gmail.com";
 

@@ -108,7 +108,9 @@
   .photo-card:hover { transform: translateY(-4px); box-shadow: 0 22px 40px -26px rgba(28,73,60,.75); }
   .photo-card img { transition: transform .6s cubic-bezier(.2,.65,.2,1); }
   .photo-card:hover img { transform: scale(1.045); }
-  .hero-shine { background-image: linear-gradient(115deg, transparent 42%, rgba(255,255,255,.85) 50%, transparent 58%); background-size: 250% 100%; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent; mix-blend-mode: overlay; animation: hero-shine 7s ease-in-out infinite; animation-delay: 1.6s; }
+  /* Light sweep over the hero slogan. Drawn from data-shine in a pseudo-element so the text
+     isn't duplicated in the page content read by search engines and screen readers. */
+  .hero-shine::after { content: attr(data-shine); position: absolute; inset: 0; white-space: pre-line; pointer-events: none; background-image: linear-gradient(115deg, transparent 42%, rgba(255,255,255,.85) 50%, transparent 58%); background-size: 250% 100%; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent; mix-blend-mode: overlay; animation: hero-shine 7s ease-in-out infinite; animation-delay: 1.6s; }
   .partner-marquee { width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
   .partner-track { display: flex; width: max-content; align-items: center; animation: partner-scroll 38s linear infinite; }
   .partner-marquee:hover .partner-track { animation-play-state: paused; }
@@ -126,4 +128,4 @@
 }
 
 @media (max-width: 640px) { .page-width { width: min(100% - 2.5rem, 1180px); } }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .partner-track { animation: none; } .hero-shine { display: none; } .photo-card:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .partner-track { animation: none; } .hero-shine::after { display: none; } .photo-card:hover { transform: none; } }

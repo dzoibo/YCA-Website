@@ -2,7 +2,13 @@
 const nb = " ";
 
 export const en = {
-  meta: { title: "YCA Ottawa-Gatineau | Community. Culture. Growth." },
+  meta: {
+    title: "YCA Ottawa-Gatineau | Young Cameroonians Association",
+    description:
+      "Non-profit association of young Cameroonians (18-35) in Ottawa and Gatineau: cultural events, networking, mutual support and a warm welcome for newcomers.",
+    ogAlt:
+      "YCA Ottawa-Gatineau members in traditional Cameroonian dress, with the slogan Community. Culture. Growth.",
+  },
   nav: {
     links: ["Our Story", "Programs", "Gallery", "Events"],
     join: "Join Us",
@@ -265,6 +271,49 @@ export const en = {
     errorBody:
       "We couldn't load our events right now. Follow us on Instagram for the latest updates.",
     cta: "Follow for updates",
+  },
+  faq: {
+    eyebrow: "FAQ",
+    title: ["Your questions, ", "our answers", "."],
+    items: [
+      [
+        "Who can join YCA Ottawa-Gatineau?",
+        "YCA is open to young Cameroonians aged 18 to 35 living in Ottawa or Gatineau, and to friends of Cameroon. Newcomers are especially welcome.",
+      ],
+      [
+        "Is there a membership fee?",
+        "Not for now. Membership fees will launch once the association is officially registered.",
+      ],
+      [
+        "What kind of activities does YCA organize?",
+        "Community gatherings, cultural exchanges and culture nights, professional growth workshops and networking, monthly Social Saturdays, outdoor days in Gatineau Park and sports, plus support and wellness initiatives.",
+      ],
+      [
+        "Where and when do the events take place?",
+        "In Ottawa and Gatineau, all year round. Upcoming events are listed on this page; dates and details are shared on Instagram (@ycaottawagatineau) and in the WhatsApp community as soon as they are confirmed.",
+      ],
+      [
+        "I just arrived in Ottawa or Gatineau. Can YCA help me?",
+        "Yes. Come and say hello on Instagram or by email and join our events to meet people. A mentorship program to welcome and guide newcomers is on our roadmap.",
+      ],
+      [
+        "How can I volunteer with YCA?",
+        "Our volunteer team is organized into Operations, Marketing, Events and Sports & Leisure. We are looking for help with marketing, mentorship, fundraising and sponsorship, events and administration: write to ycaottawagatineau@gmail.com.",
+      ],
+      [
+        "Is YCA present in other cities?",
+        "Yes. YCA started in Toronto in May 2023, opened in Ottawa-Gatineau in May 2025 and in Montréal in August 2026.",
+      ],
+      [
+        "How can we become a partner or sponsor?",
+        "Email the team at ycaottawagatineau@gmail.com. Our partners and sponsors help us create opportunities for young people and bring our initiatives to life.",
+      ],
+    ],
+  },
+  notFound: {
+    title: "Page not found",
+    body: "This page doesn't exist or has moved.",
+    cta: "Back to home",
   },
   footer: {
     logoAlt: "YCA OTTAWA",
