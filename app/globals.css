@@ -1,41 +1,131 @@
 @import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
 
-:root { --green: #1c493c; --bright-green: #194d02; --sage: #7c9b76; --cream: #f7f2e9; --yellow: #fed104; --ink: #3b4256; }
-@layer base {
-  * { box-sizing: border-box; }
-  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
-  body { margin: 0; background: #fff; color: var(--green); font-family: Arial, Helvetica, sans-serif; }
-  a { color: inherit; }
-  ::selection { background: var(--yellow); color: #14240b; }
+@custom-variant dark (&:is(.dark *));
+
+/* YCA palette. shadcn's semantic tokens below are mapped onto it, so ui/ components
+   (Button, Card, Sheet, DropdownMenu...) render in the brand colors. */
+:root {
+  --green: #1c493c;
+  --forest: #194d02;
+  --pine: #12362b;
+  --sage: #7c9b76;
+  --cream: #f7f2e9;
+  --sand: #f3f1e7;
+  --parchment: #e9e1ce;
+  --gold: #e3c067;
+  --yellow: #fed104;
+  --night: #14240b;
+  --ink: #4a5164;
+  --stone: #5a6560;
+
+  --background: #fff;
+  --foreground: var(--green);
+  --card: #fff;
+  --card-foreground: var(--green);
+  --popover: #fff;
+  --popover-foreground: var(--green);
+  --primary: var(--forest);
+  --primary-foreground: #fff;
+  --secondary: var(--yellow);
+  --secondary-foreground: var(--night);
+  --muted: var(--cream);
+  --muted-foreground: var(--stone);
+  --accent: var(--sand);
+  --accent-foreground: var(--forest);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: rgb(28 73 60 / 0.12);
+  --input: rgb(28 73 60 / 0.2);
+  --ring: var(--sage);
+  --radius: 0.625rem;
+  --ease-calm: cubic-bezier(.22, 1, .36, 1);
+  /* Gentle ease-in-out for the header morph: no snap at the start, soft landing. */
+  --ease-header: cubic-bezier(.45, 0, .2, 1);
 }
+
+@theme {
+  --font-sans: Arial, Helvetica, sans-serif;
+  --font-heading: Arial, Helvetica, sans-serif;
+}
+
+@theme inline {
+  --color-forest: var(--forest);
+  --color-pine: var(--pine);
+  --color-sage: var(--sage);
+  --color-cream: var(--cream);
+  --color-sand: var(--sand);
+  --color-parchment: var(--parchment);
+  --color-gold: var(--gold);
+  --color-night: var(--night);
+  --color-ink: var(--ink);
+  --color-stone: var(--stone);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --radius-sm: calc(var(--radius) * 0.6);
+  --radius-md: calc(var(--radius) * 0.8);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) * 1.4);
+  --radius-2xl: calc(var(--radius) * 1.8);
+  --radius-3xl: calc(var(--radius) * 2.2);
+  --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+@layer base {
+  * { @apply border-border outline-ring/50; }
+  html { scroll-behavior: smooth; scroll-padding-top: 76px; }
+  body { @apply m-0 bg-background font-sans text-foreground; }
+  a { color: inherit; }
+  ::selection { background: var(--yellow); color: var(--night); }
+}
+
 @keyframes hero-shine { 0%, 75% { background-position: -120% 0; } 92%, 100% { background-position: 220% 0; } }
 @keyframes partner-scroll { to { transform: translateX(-50%); } }
+
 @layer components {
   .font-display { font-family: Arial, Helvetica, sans-serif; letter-spacing: -.045em; }
-  .eyebrow { font-size: .69rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: var(--bright-green); }
+  .eyebrow { font-size: .69rem; font-weight: 800; letter-spacing: .2em; text-transform: uppercase; color: var(--forest); }
   .marker { background: linear-gradient(180deg, transparent 63%, rgba(254, 209, 4, .56) 63%); }
   .page-width { width: min(1180px, calc(100% - 3.5rem)); margin: 0 auto; }
-  .button { display: inline-flex; align-items: center; justify-content: center; border-radius: 999px; padding: .82rem 1.55rem; font-size: .875rem; font-weight: 750; white-space: nowrap; text-decoration: none; transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease; }
-  .button:hover { transform: translateY(-2px); }
   .photo-card { overflow: hidden; border-radius: 11px; border: 1px solid rgba(28,73,60,.16); background: #fff; box-shadow: 0 16px 34px -28px rgba(28,73,60,.6); transition: transform .35s cubic-bezier(.22,1,.36,1), box-shadow .35s cubic-bezier(.22,1,.36,1); }
   .photo-card:hover { transform: translateY(-4px); box-shadow: 0 22px 40px -26px rgba(28,73,60,.75); }
   .photo-card img { transition: transform .6s cubic-bezier(.2,.65,.2,1); }
   .photo-card:hover img { transform: scale(1.045); }
-  .hero-shine { background-image: linear-gradient(115deg, transparent 42%, rgba(255,255,255,.85) 50%, transparent 58%); background-size: 250% 100%; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent; mix-blend-mode: overlay; animation: hero-shine 7s ease-in-out infinite; animation-delay: 1.6s; }
+  /* Light sweep over the hero slogan. Drawn from data-shine in a pseudo-element so the text
+     isn't duplicated in the page content read by search engines and screen readers. */
+  .hero-shine::after { content: attr(data-shine); position: absolute; inset: 0; white-space: pre-line; pointer-events: none; background-image: linear-gradient(115deg, transparent 42%, rgba(255,255,255,.85) 50%, transparent 58%); background-size: 250% 100%; background-repeat: no-repeat; -webkit-background-clip: text; background-clip: text; color: transparent; mix-blend-mode: overlay; animation: hero-shine 7s ease-in-out infinite; animation-delay: 1.6s; }
   .partner-marquee { width: 100%; overflow: hidden; mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent); }
   .partner-track { display: flex; width: max-content; align-items: center; animation: partner-scroll 38s linear infinite; }
   .partner-marquee:hover .partner-track { animation-play-state: paused; }
   .partner-logo { display: inline-flex; align-items: center; justify-content: center; height: 56px; padding: 0 2rem; }
-  .nav-header { position: fixed; inset-inline: 0; top: 0; z-index: 50; padding: 0; }
+  /* Header: full-width bar at the top of the page, floating pill once scrolled. Only
+     non-transform properties are transitioned so the bar glides without being stretched. */
+  .nav-header { position: fixed; inset-inline: 0; top: 0; z-index: 50; padding: 0; transition: padding .55s var(--ease-header); }
   .nav-header.is-scrolled { padding: 16px 22px; }
-  .nav-bar { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; width: 100%; margin-inline: auto; max-width: none; border-radius: 0; padding: 12px 30px; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: none; transition: border-radius .45s cubic-bezier(.22,1,.36,1), box-shadow .45s cubic-bezier(.22,1,.36,1); }
-  .nav-bar.is-scrolled { max-width: 1180px; border-radius: 999px; padding: 12px 22px 12px 28px; box-shadow: 0 16px 34px -22px rgba(28,73,60,.45); }
+  .nav-bar { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; width: 100%; max-width: 100%; margin-inline: auto; border-radius: 0; padding: 12px 30px; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 16px 34px -22px rgba(28,73,60,0); transition: max-width .55s var(--ease-header), padding .55s var(--ease-header), border-radius .55s var(--ease-header), box-shadow .55s var(--ease-header); }
+  /* 40px radius is already a full pill for this ~68px-tall bar, and animates evenly from 0
+     (999px would snap round in the first frames). */
+  .nav-bar.is-scrolled { max-width: 1180px; border-radius: 40px; padding: 12px 22px 12px 28px; box-shadow: 0 16px 34px -22px rgba(28,73,60,.45); }
   .goal-number { color: transparent; -webkit-text-stroke: 1.5px var(--green); letter-spacing: -.02em; transition: color .4s cubic-bezier(.22,1,.36,1), -webkit-text-stroke-color .4s ease; }
   .group:hover .goal-number { color: var(--green); }
-  .no-scrollbar { scrollbar-width: none; }
-  .no-scrollbar::-webkit-scrollbar { display: none; }
-  .team-card { transition: border-color .4s ease, box-shadow .4s cubic-bezier(.22,1,.36,1); }
-  .hamburger-bar { display: block; width: 100%; height: 2px; border-radius: 999px; background: currentColor; transform-origin: center; }
 }
+
 @media (max-width: 640px) { .page-width { width: min(100% - 2.5rem, 1180px); } }
-@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .partner-track { animation: none; } .hero-shine { display: none; } .photo-card:hover { transform: none; } }
+@media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; scroll-behavior: auto !important; transition-duration: .01ms !important; } .partner-track { animation: none; } .hero-shine::after { display: none; } .photo-card:hover { transform: none; } }
