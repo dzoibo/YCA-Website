@@ -39,6 +39,9 @@
   --input: rgb(28 73 60 / 0.2);
   --ring: var(--sage);
   --radius: 0.625rem;
+  --ease-calm: cubic-bezier(.22, 1, .36, 1);
+  /* Gentle ease-in-out for the header morph: no snap at the start, soft landing. */
+  --ease-header: cubic-bezier(.45, 0, .2, 1);
 }
 
 @theme {
@@ -110,10 +113,14 @@
   .partner-track { display: flex; width: max-content; align-items: center; animation: partner-scroll 38s linear infinite; }
   .partner-marquee:hover .partner-track { animation-play-state: paused; }
   .partner-logo { display: inline-flex; align-items: center; justify-content: center; height: 56px; padding: 0 2rem; }
-  .nav-header { position: fixed; inset-inline: 0; top: 0; z-index: 50; padding: 0; }
+  /* Header: full-width bar at the top of the page, floating pill once scrolled. Only
+     non-transform properties are transitioned so the bar glides without being stretched. */
+  .nav-header { position: fixed; inset-inline: 0; top: 0; z-index: 50; padding: 0; transition: padding .55s var(--ease-header); }
   .nav-header.is-scrolled { padding: 16px 22px; }
-  .nav-bar { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; width: 100%; margin-inline: auto; max-width: none; border-radius: 0; padding: 12px 30px; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: none; transition: border-radius .45s cubic-bezier(.22,1,.36,1), box-shadow .45s cubic-bezier(.22,1,.36,1); }
-  .nav-bar.is-scrolled { max-width: 1180px; border-radius: 999px; padding: 12px 22px 12px 28px; box-shadow: 0 16px 34px -22px rgba(28,73,60,.45); }
+  .nav-bar { display: flex; align-items: center; justify-content: space-between; gap: 1.5rem; width: 100%; max-width: 100%; margin-inline: auto; border-radius: 0; padding: 12px 30px; background: rgba(255,255,255,.94); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); box-shadow: 0 16px 34px -22px rgba(28,73,60,0); transition: max-width .55s var(--ease-header), padding .55s var(--ease-header), border-radius .55s var(--ease-header), box-shadow .55s var(--ease-header); }
+  /* 40px radius is already a full pill for this ~68px-tall bar, and animates evenly from 0
+     (999px would snap round in the first frames). */
+  .nav-bar.is-scrolled { max-width: 1180px; border-radius: 40px; padding: 12px 22px 12px 28px; box-shadow: 0 16px 34px -22px rgba(28,73,60,.45); }
   .goal-number { color: transparent; -webkit-text-stroke: 1.5px var(--green); letter-spacing: -.02em; transition: color .4s cubic-bezier(.22,1,.36,1), -webkit-text-stroke-color .4s ease; }
   .group:hover .goal-number { color: var(--green); }
 }

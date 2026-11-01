@@ -19,11 +19,12 @@ function useScrolledPastSentinel() {
   useEffect(() => {
     const update = () => {
       const sentinel = document.getElementById(SCROLL_SENTINEL_ID);
-      setScrolled(
-        sentinel
-          ? sentinel.getBoundingClientRect().bottom <= 20
-          : window.scrollY > 60,
-      );
+      const distance = sentinel
+        ? sentinel.getBoundingClientRect().bottom
+        : 80 - window.scrollY;
+      // Hysteresis: switch at 20px going down but only back at 40px going up, so stopping
+      // right at the threshold doesn't make the bar flip back and forth.
+      setScrolled((scrolled) => distance <= (scrolled ? 40 : 20));
     };
     update();
     window.addEventListener("scroll", update, { passive: true });
@@ -36,36 +37,24 @@ function useScrolledPastSentinel() {
   return scrolled;
 }
 
+/**
+ * Fixed top bar. Past the hero's first lines it eases into a floating pill: the change is a
+ * pure CSS transition on width, padding, radius and shadow (see .nav-bar in globals.css), so
+ * the white bar never gets stretched by transforms.
+ */
 export function SiteHeader() {
   const { t } = useLang();
   const isScrolled = useScrolledPastSentinel();
   const reduceMotion = useReducedMotion();
-  const layout = !reduceMotion;
-  const layoutTransition = {
-    layout: { duration: reduceMotion ? 0 : 0.45, ease: easeCalm },
-  };
   return (
     <motion.header
-      layout={layout}
       initial={reduceMotion ? false : { opacity: 0, y: -10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{
-        ...layoutTransition,
-        default: { duration: 0.6, ease: easeCalm },
-      }}
+      transition={{ duration: 0.6, ease: easeCalm }}
       className={cn("nav-header", isScrolled && "is-scrolled")}
     >
-      <motion.div
-        layout={layout}
-        transition={layoutTransition}
-        className={cn("nav-bar", isScrolled && "is-scrolled")}
-      >
-        <motion.a
-          layout={layout}
-          transition={layoutTransition}
-          href="#top"
-          aria-label={t.nav.home}
-        >
+      <div className={cn("nav-bar", isScrolled && "is-scrolled")}>
+        <a href="#top" aria-label={t.nav.home} className="shrink-0">
           <Image
             src="/assets/yca-logo.png"
             alt="YCA OTTAWA"
@@ -74,12 +63,8 @@ export function SiteHeader() {
             className="h-11 w-auto mix-blend-multiply"
             priority
           />
-        </motion.a>
-        <motion.nav
-          layout={layout}
-          transition={layoutTransition}
-          className="ml-auto hidden items-center gap-7 text-sm font-semibold text-black md:flex"
-        >
+        </a>
+        <nav className="ml-auto hidden items-center gap-7 text-sm font-semibold text-black md:flex">
           {t.nav.links.map((label, i) => (
             <a
               key={navHrefs[i]}
@@ -89,12 +74,8 @@ export function SiteHeader() {
               {label}
             </a>
           ))}
-        </motion.nav>
-        <motion.div
-          layout={layout}
-          transition={layoutTransition}
-          className="flex items-center gap-3"
-        >
+        </nav>
+        <div className="flex items-center gap-3">
           <div className="hidden md:block">
             <LanguageSwitcher />
           </div>
@@ -107,8 +88,8 @@ export function SiteHeader() {
             <a href="#join">{t.nav.join}</a>
           </Button>
           <MobileNav />
-        </motion.div>
-      </motion.div>
+        </div>
+      </div>
     </motion.header>
   );
 }
